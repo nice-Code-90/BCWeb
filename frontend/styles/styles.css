@@ -1,4 +1,8 @@
+h1{
+    text-align: center;
+}
+
 .navigation{
     display: flex;
-    
+    justify-content: space-between;
 }
