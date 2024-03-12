@@ -1,8 +1,60 @@
-h1{
-    text-align: center;
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 0;
 }
 
-.navigation{
-    display: flex;
-    justify-content: space-between;
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.navigation {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.button {
+  margin: 0 10px;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.contentContainer {
+  max-width: 800px;
+  margin: 20px auto;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.salesQuote,
+.item,
+.customer {
+  border: 1px solid #ddd;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #fff;
+  border-radius: 5px;
+}
+
+.salesQuote h2,
+.item h2,
+.customer h2 {
+  color: #333;
+}
+
+.salesQuote p,
+.item p,
+.customer p {
+  margin: 8px 0;
+  color: #666;
+}
+
+.salesQuoteElement {
+  font-weight: bold;
 }
