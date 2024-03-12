@@ -11,6 +11,7 @@ const serverPort = window.location.port;
 const customersAPI = `http://${serverHost}:${serverPort}/api/customers`;
 const itemsAPI = `http://${serverHost}:${serverPort}/api/items`;
 const salesQuotesAPI = `http://${serverHost}:${serverPort}/api/salesQuotes`;
+const salesLinesAPI = `http://${serverHost}:${serverPort}/api/salesLines`;
 
 //prepare sales Quotes data for rendering
 let salesQuotes = [];
@@ -18,6 +19,45 @@ async function loadSalesQuotes() {
   let data = await fetch(salesQuotesAPI);
   let dataJson = await data.json();
   salesQuotes = dataJson.value;
+}
+
+// Load and render Sales Lines for the selected Sales Quote
+async function loadAndRenderSalesLines(quoteNumber) {
+  try {
+    // Load Sales Lines for the selected Sales Quote
+    let data = await fetch(
+      `${salesLinesAPI}?filter=Document_No eq ${quoteNumber}`
+    );
+    let dataJson = await data.json();
+    const salesLines = dataJson.value;
+
+    // Render Sales Lines
+    renderSalesLines(salesLines);
+  } catch (error) {
+    console.error("Error loading salesLines data:", error);
+    contentContainer.innerHTML = `<p>Error loading salesLines: ${error.message}</p>`;
+  }
+}
+
+// Render Sales Lines
+function renderSalesLines(salesLines) {
+  contentContainer.innerHTML = "";
+  salesLines.forEach((salesLine) => {
+    const salesLineElement = document.createElement("div");
+    salesLineElement.classList.add("salesLine");
+
+    // Additional information for Sales Lines
+    const salesLineInfo = `
+        <h2>Sales Line Number: ${salesLine.lineNumber}</h2>
+        <p>Item Number: ${salesLine.itemNo}</p>
+        <p>Description: ${salesLine.description}</p>
+        <p>Unit Price: ${salesLine.unitPrice}</p>
+        <p>Quantity: ${salesLine.quantity}</p>
+      `;
+    salesLineElement.innerHTML = salesLineInfo;
+
+    contentContainer.appendChild(salesLineElement);
+  });
 }
 
 async function renderSalesQuotes() {
@@ -30,6 +70,15 @@ async function renderSalesQuotes() {
     salesQuotes.forEach((salesQuote) => {
       const salesQuoteElement = document.createElement("div");
       salesQuoteElement.classList.add("salesQuote");
+
+      // Hyperlink for Sales Lines
+      const salesLinesLink = document.createElement("a");
+      salesLinesLink.href = "#"; // Placeholder, actual href set later
+      salesLinesLink.textContent = `Quote Number: ${salesQuote.no}`;
+      salesLinesLink.addEventListener("click", () =>
+        loadAndRenderSalesLines(salesQuote.no)
+      );
+      salesQuoteElement.appendChild(salesLinesLink);
 
       const salesQuoteInfo = `
         
