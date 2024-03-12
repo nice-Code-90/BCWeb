@@ -39,6 +39,9 @@ async function renderSalesQuotes() {
         <p>Due Date: ${salesQuote.dueDate}</p>
         <p>Posting Date: ${salesQuote.postingDate}</p>
         <p>Sell To Customer Number: ${salesQuote.sellToCustomerNo}</p>
+        <p>Sell To Customer Name: ${salesQuote.sellToCustomerName}</p>
+        <p>Sell To Contact: ${salesQuote.selltoContact}</p>
+        <p>Amount: ${salesQuote.Amount}</p>
       `;
       salesQuoteElement.innerHTML = salesQuoteInfo;
       contentContainer.appendChild(salesQuoteElement);
