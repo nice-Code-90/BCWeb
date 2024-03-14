@@ -16,6 +16,8 @@ const itemsAPI = `http://${serverHost}:${serverPort}/api/items`;
 const salesQuotesAPI = `http://${serverHost}:${serverPort}/api/salesQuotes`;
 const salesLinesAPI = `http://${serverHost}:${serverPort}/api/salesLines`;
 
+//-----------------------------------FUNCTIONS FOR RETREIVE BC DATAS--------------------------------------------//
+
 //prepare customers data for rendering
 let customers = [];
 async function loadCustomers() {
@@ -100,6 +102,17 @@ async function renderSalesQuotes() {
     }
 
     contentContainer.innerHTML = "";
+    //Button for new Sales Quote
+    let newSalesQuoteButton = document.createElement("button");
+    newSalesQuoteButton.classList.add("js-New-salesQuote-button");
+    newSalesQuoteButton.textContent = "Add New Sales Quote";
+    contentContainer.appendChild(newSalesQuoteButton);
+
+    newSalesQuoteButton.querySelector(".js-New-salesQuote-button");
+    newSalesQuoteButton.addEventListener("click", async () => {
+      await newSalesQuote();
+    });
+
     salesQuotes.forEach((salesQuote) => {
       const salesQuoteElement = document.createElement("div");
       salesQuoteElement.classList.add("salesQuote");
@@ -119,9 +132,6 @@ async function renderSalesQuotes() {
       salesLinesButton.classList.add("js-sales-Lines-button");
       salesLinesButton.textContent = "More Info";
 
-      salesLinesButton.addEventListener("click", async () => {
-        await renderSalesLines();
-      });
       salesQuoteElement.appendChild(salesLinesButton);
       salesQuoteElement.innerHTML += salesQuoteInfo;
       contentContainer.appendChild(salesQuoteElement);
@@ -183,6 +193,21 @@ async function renderSalesLines(salesQuoteNo) {
     contentContainer.innerHTML = `<p>Error loading sales lines: ${error.message}</p>`;
   }
 }
+
+//-----------------------------------FUNCTIONS FOR POST DATAS TO BC SERVER--------------------------------------------//
+
+function newSalesQuote() {
+  contentContainer.innerHTML = `
+  <form action ="/api/PostSalesQuotes" method="POST">
+      <input type="number" name="sellToCustomerNo" placeholder="Enter Sell to Customer NO:" />
+      <input type="text" name="sellToContact" placeholder="Enter Sell to Contact name:" />
+      <input type="date" name="documentDate" placeholder="Enter Document date:" />
+      <input type="date" name="dueDate" placeholder="Enter dueDate:" />
+      <input type="submit" value="Create New Sales Quote" />
+  </form>
+  `;
+}
+
 customersButton.addEventListener("click", renderCustomers);
 itemsButton.addEventListener("click", renderItems);
 salesQuotesButton.addEventListener("click", renderSalesQuotes);

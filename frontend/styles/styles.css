@@ -1,60 +1,107 @@
+/* General Styles */
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
   margin: 0;
   padding: 0;
+  background-color: #f0f0f0;
 }
 
 h1 {
   text-align: center;
   color: #333;
+  font-size: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid #ddd;
 }
 
+.container {
+  width: 80%;
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Navigation Bar */
 .navigation {
   display: flex;
-  justify-content: center;
-  margin-top: 20px;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .button {
-  margin: 0 10px;
-  padding: 10px;
+  padding: 10px 20px;
   font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   cursor: pointer;
-}
-
-.contentContainer {
-  max-width: 800px;
-  margin: 20px auto;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 5px;
-}
-
-.salesQuote,
-.item,
-.customer {
-  border: 1px solid #ddd;
-  padding: 15px;
-  margin-bottom: 15px;
-  background-color: #fff;
-  border-radius: 5px;
-}
-
-.salesQuote h2,
-.item h2,
-.customer h2 {
+  background-color: #e0e0e0;
   color: #333;
 }
 
-.salesQuote p,
+.button:hover {
+  background-color: #ccc;
+}
+
+/* Content Area */
+.content {
+  padding: 20px;
+}
+
+.customer,
+.item,
+.salesQuote,
+.salesLine {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.customer h2,
+.item h2,
+.salesQuote h2,
+.salesLine h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.customer p,
 .item p,
-.customer p {
-  margin: 8px 0;
+.salesQuote p,
+.salesLine p {
+  margin-bottom: 5px;
   color: #666;
 }
 
-.salesQuoteElement {
-  font-weight: bold;
+/* Form Styles */
+form {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+form input,
+form select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 10px;
+  flex: 1 1 200px;
+}
+
+form input[type="submit"] {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+form input[type="submit"]:hover {
+  background-color: #0069d9;
 }
