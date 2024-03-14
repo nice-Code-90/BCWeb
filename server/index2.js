@@ -3,16 +3,25 @@ const axios = require("axios");
 const app = express();
 app.use(express.static("frontend"));
 
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 // BC tenant and Customers data
-const userName = "[REPLACE WITH YOUR USERNAME]";
-const companyName = "[REPLACE WITH YOUR COMPANY NAME]";
-const environment = "[REPLACE WITH YOUR ENVIRONMENT NAME]";
+const userName = "[REPLACE WITH YOUR BC USERNAME]";
+const companyName = "[REPLACE WITH YOUR BC COMPANY NAME]";
+const environment = "[REPLACE WITH YOUR BC ENVIRONMENT]";
 const clientId = "[REPLACE WITH YOUR CLIENT ID]";
-const clientSecret = "[REPLACE WITH YOUR CLIENTSECRET]";
+const clientSecret = "[REPLACE WITH YOUR CLIENT PASSWORD]";
 const scope = "https://api.businesscentral.dynamics.com/.default";
 const tenantID = "[REPLACE WITH YOUR TENANT ID]";
 const companyID = "[REPLACE WITH YOUR COMPANY ID]";
 const tokenUrl = `https://login.microsoftonline.com/${tenantID}/oauth2/v2.0/token`;
+
+// API endpoints for BC datas
+const customersAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/${environment}/api/${companyName}/${userName}/v1.0/companies(${companyID})/customers`;
+const salesQuotesLinesAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/SandBox/api/${companyName}/${userName}/v1.0/companies(${companyID})/salesLines`;
+const salesQuotesHeadersAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/SandBox/api/${companyName}/${userName}/v1.0/companies(${companyID})/salesHeaders`;
+const itemsAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/${environment}/api/${companyName}/${userName}/v1.0/companies(${companyID})/items`;
 
 // Acces token
 async function getToken() {
@@ -46,7 +55,7 @@ async function waitForToken() {
 async function getSalesLines() {
   try {
     const response = await axios.get(
-      `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/SandBox/api/${companyName}/${userName}/v1.0/companies(${companyID})/salesLines?$filter=documentType eq 'Quote'`,
+      `${salesQuotesLinesAPI}?$filter=documentType eq 'Quote'`,
       {
         headers: {
           Authorization: `Bearer ${myToken}`,
@@ -68,7 +77,7 @@ async function getSalesLines() {
 async function getSalesQuotes() {
   try {
     const response = await axios.get(
-      `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/SandBox/api/${companyName}/${userName}/v1.0/companies(${companyID})/salesHeaders?$filter=documentType eq 'Quote'`,
+      `${salesQuotesHeadersAPI}?$filter=documentType eq 'Quote'`,
       {
         headers: {
           Authorization: `Bearer ${myToken}`,
@@ -89,14 +98,11 @@ async function getSalesQuotes() {
 //Get items
 async function getItems() {
   try {
-    const response = await axios.get(
-      `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/${environment}/api/${companyName}/${userName}/v1.0/companies(${companyID})/items`,
-      {
-        headers: {
-          Authorization: `Bearer ${myToken}`,
-        },
-      }
-    );
+    const response = await axios.get(`${itemsAPI}`, {
+      headers: {
+        Authorization: `Bearer ${myToken}`,
+      },
+    });
 
     const items = response.data;
     console.log("Items:", items);
@@ -111,14 +117,11 @@ async function getItems() {
 //Get customers
 async function getCustomers() {
   try {
-    const response = await axios.get(
-      `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/${environment}/api/${companyName}/${userName}/v1.0/companies(${companyID})/customers`,
-      {
-        headers: {
-          Authorization: `Bearer ${myToken}`,
-        },
-      }
-    );
+    const response = await axios.get(`${customersAPI}`, {
+      headers: {
+        Authorization: `Bearer ${myToken}`,
+      },
+    });
 
     const customers = response.data;
     console.log("Ügyfelek:", customers);
@@ -128,6 +131,8 @@ async function getCustomers() {
     throw error;
   }
 }
+
+//Post Sales Quotes Headers
 
 //ENDPOINTS
 
@@ -220,6 +225,52 @@ app.get("/api/customers", async (req, res) => {
   } catch (error) {
     console.log("Error at requesting customers data:", error);
     res.status(500).send("Error fetching customers");
+  }
+});
+
+//-----------------------------------POST REQUESTS-----------------------------------------//
+
+//Post Sales Quotes header
+
+app.post("/api/PostSalesQuotes", async (req, res) => {
+  if (myToken === "") {
+    (async () => {
+      try {
+        myToken = await getToken();
+        console.log("Token:", myToken);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    })();
+  }
+  await waitForToken();
+
+  let salesQuoteHeader = {
+    documentType: "Quote",
+    no: "",
+    sellToCustomerNo: req.body.sellToCustomerNo,
+    selltoContact: req.body.sellToContact,
+    documentDate: req.body.documentDate,
+    dueDate: req.body.dueDate,
+  };
+  console.log(salesQuoteHeader);
+
+  try {
+    const response = await axios.post(salesQuotesHeadersAPI, salesQuoteHeader, {
+      headers: {
+        Authorization: `Bearer ${myToken}`,
+        "Content-Type": "application/json",
+        Accept: "*/*",
+        Connection: "keep-alive",
+        "Accept-Encoding": "gzip, deflate, br",
+      },
+    });
+
+    console.log("Sales Quote created:", response.data);
+    res.json({ message: "Sales Quote created succesfully!" });
+  } catch (error) {
+    console.error("Error creating Sales Quote:", error);
+    res.status(500).send("Error creating Sales Quote");
   }
 });
 

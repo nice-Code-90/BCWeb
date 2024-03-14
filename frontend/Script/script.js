@@ -202,7 +202,7 @@ function newSalesQuote() {
       <input type="number" name="sellToCustomerNo" placeholder="Enter Sell to Customer NO:" />
       <input type="text" name="sellToContact" placeholder="Enter Sell to Contact name:" />
       <input type="date" name="documentDate" placeholder="Enter Document date:" />
-      <input type="date" name="dueDate" placeholder="Enter dueDate:" />
+      <input type="date" name="dueDate" placeholder="Enter due Date:" />
       <input type="submit" value="Create New Sales Quote" />
   </form>
   `;
