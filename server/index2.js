@@ -7,20 +7,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // BC tenant and Customers data
-const userName = "[REPLACE WITH YOUR BC USERNAME]";
-const companyName = "[REPLACE WITH YOUR BC COMPANY NAME]";
-const environment = "[REPLACE WITH YOUR BC ENVIRONMENT]";
-const clientId = "[REPLACE WITH YOUR CLIENT ID]";
-const clientSecret = "[REPLACE WITH YOUR CLIENT PASSWORD]";
+//REPLACE THESE DATAS WITH YOUR OWN BC ENVIRONMENT VARIABLES
+const userName = "";
+const companyName = "";
+const environment = "";
+const clientId = "";
+const clientSecret = "";
 const scope = "https://api.businesscentral.dynamics.com/.default";
-const tenantID = "[REPLACE WITH YOUR TENANT ID]";
-const companyID = "[REPLACE WITH YOUR COMPANY ID]";
+const tenantID = "";
+const companyID = "";
 const tokenUrl = `https://login.microsoftonline.com/${tenantID}/oauth2/v2.0/token`;
 
 // API endpoints for BC datas
 const customersAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/${environment}/api/${companyName}/${userName}/v1.0/companies(${companyID})/customers`;
-const salesQuotesLinesAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/SandBox/api/${companyName}/${userName}/v1.0/companies(${companyID})/salesLines`;
-const salesQuotesHeadersAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/SandBox/api/${companyName}/${userName}/v1.0/companies(${companyID})/salesHeaders`;
+const salesLinesAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/SandBox/api/${companyName}/${userName}/v1.0/companies(${companyID})/salesLines`;
+const salesHeadersAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/SandBox/api/${companyName}/${userName}/v1.0/companies(${companyID})/salesHeaders`;
 const itemsAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/${environment}/api/${companyName}/${userName}/v1.0/companies(${companyID})/items`;
 
 // Acces token
@@ -55,7 +56,7 @@ async function waitForToken() {
 async function getSalesLines() {
   try {
     const response = await axios.get(
-      `${salesQuotesLinesAPI}?$filter=documentType eq 'Quote'`,
+      `${salesLinesAPI}?$filter=documentType eq 'Quote'`,
       {
         headers: {
           Authorization: `Bearer ${myToken}`,
@@ -77,7 +78,7 @@ async function getSalesLines() {
 async function getSalesQuotes() {
   try {
     const response = await axios.get(
-      `${salesQuotesHeadersAPI}?$filter=documentType eq 'Quote'`,
+      `${salesHeadersAPI}?$filter=documentType eq 'Quote'`,
       {
         headers: {
           Authorization: `Bearer ${myToken}`,
@@ -256,7 +257,7 @@ app.post("/api/PostSalesQuotes", async (req, res) => {
   console.log(salesQuoteHeader);
 
   try {
-    const response = await axios.post(salesQuotesHeadersAPI, salesQuoteHeader, {
+    const response = await axios.post(salesHeadersAPI, salesQuoteHeader, {
       headers: {
         Authorization: `Bearer ${myToken}`,
         "Content-Type": "application/json",
@@ -270,6 +271,48 @@ app.post("/api/PostSalesQuotes", async (req, res) => {
     res.json({ message: "Sales Quote created succesfully!" });
   } catch (error) {
     console.error("Error creating Sales Quote:", error);
+    res.status(500).send("Error creating Sales Quote");
+  }
+});
+
+//Post Sales Quote Line
+app.post("/api/PostSalesLines", async (req, res) => {
+  if (myToken === "") {
+    (async () => {
+      try {
+        myToken = await getToken();
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    })();
+  }
+  await waitForToken();
+  let salesQuoteLine = {
+    documentType: "Quote",
+    documentNo: req.body.documentNo,
+    type: req.body.type,
+    no: req.body.no,
+    description: req.body.description,
+    quantity: parseInt(req.body.quantity, 10),
+    unitPrice: parseInt(req.body.unitPrice, 10),
+  };
+  console.log(salesQuoteLine);
+
+  try {
+    const response = await axios.post(salesLinesAPI, salesQuoteLine, {
+      headers: {
+        Authorization: `Bearer ${myToken}`,
+        "Content-Type": "application/json",
+        Accept: "*/*",
+        Connection: "keep-alive",
+        "Accept-Encoding": "gzip, deflate, br",
+      },
+    });
+
+    console.log("Sales Line created:", response.data);
+    res.json({ message: "Sales Line Created Succesfully!" });
+  } catch (error) {
+    console.error("Error creating sales Line:", error);
     res.status(500).send("Error creating Sales Quote");
   }
 });

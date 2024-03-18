@@ -169,6 +169,16 @@ async function renderSalesLines(salesQuoteNo) {
       await loadSalesLines();
     }
     contentContainer.innerHTML = "";
+    //Button for new SalesLine
+    let newSalesLineButton = document.createElement("button");
+    newSalesLineButton.classList.add(".js-New-salesLine-button");
+    newSalesLineButton.textContent = "Add New Sales Line";
+    contentContainer.appendChild(newSalesLineButton);
+
+    newSalesLineButton.querySelector(".js-New-salesLine-button");
+    newSalesLineButton.addEventListener("click", async () => {
+      await newSalesLine(salesQuoteNo);
+    });
     salesLines.forEach((salesLine) => {
       if (salesLine.documentNo === salesQuoteNo) {
         const salesLineElement = document.createElement("div");
@@ -199,12 +209,27 @@ async function renderSalesLines(salesQuoteNo) {
 function newSalesQuote() {
   contentContainer.innerHTML = `
   <form action ="/api/PostSalesQuotes" method="POST">
-      <input type="number" name="sellToCustomerNo" placeholder="Enter Sell to Customer NO:" />
+      <input type="number" name="sellToCustomerNo" placeholder="Enter Sell to Customer No:" />
       <input type="text" name="sellToContact" placeholder="Enter Sell to Contact name:" />
       <input type="date" name="documentDate" placeholder="Enter Document date:" />
       <input type="date" name="dueDate" placeholder="Enter due Date:" />
       <input type="submit" value="Create New Sales Quote" />
   </form>
+  `;
+}
+
+function newSalesLine(salesQuoteNo) {
+  contentContainer.innerHTML = `
+    <form action="/api/PostSalesLines" method="POST">
+        <input type="number" name="documentNo" value=${salesQuoteNo} readonly>
+        <input type="text" name="type" placeholder="Enter SalesLine type of transaction:" />
+        <input type="text" name="no" placeholder= "Enter SalesLine no:" />
+        <input type="description" name="description" placeholder="Enter description" />
+        <input type="number" name="quantity" placeholder="Enter quantity:" />
+        <input type="number" name="unitPrice" placeholder="Enter unit price:" />
+        <input type="submit" value="Create New Sales Line" />
+
+    </form>
   `;
 }
 
