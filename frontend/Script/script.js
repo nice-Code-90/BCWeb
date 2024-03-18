@@ -1,238 +1,213 @@
-//pointers to html buttons
-const customersButton = document.querySelector(".js-customers-button");
-const itemsButton = document.querySelector(".js-items-button");
-const salesQuotesButton = document.querySelector(".js-salesQuotes-button");
-
-const salesLinesButton = document.querySelector(".js-sales-Lines-button");
-
-//pointers to html body areas
+// Elemek kiválasztása
+const customersBtn = document.querySelector(".js-customers-button");
+const itemsBtn = document.querySelector(".js-items-button");
+const salesQuotesBtn = document.querySelector(".js-salesQuotes-button");
+const salesLinesBtn = document.querySelector(".js-sales-Lines-button");
 const contentContainer = document.querySelector(".contentContainer");
-
-//Connection datas
 const serverHost = window.location.hostname;
 const serverPort = window.location.port;
-const customersAPI = `http://${serverHost}:${serverPort}/api/customers`;
-const itemsAPI = `http://${serverHost}:${serverPort}/api/items`;
-const salesQuotesAPI = `http://${serverHost}:${serverPort}/api/salesQuotes`;
-const salesLinesAPI = `http://${serverHost}:${serverPort}/api/salesLines`;
+const apiUrls = {
+  customers: `http://${serverHost}:${serverPort}/api/customers`,
+  items: `http://${serverHost}:${serverPort}/api/items`,
+  salesQuotes: `http://${serverHost}:${serverPort}/api/salesQuotes`,
+  salesLines: `http://${serverHost}:${serverPort}/api/salesLines`,
+};
 
-//-----------------------------------FUNCTIONS FOR RETREIVE BC DATAS--------------------------------------------//
-
-//prepare customers data for rendering
-let customers = [];
-async function loadCustomers() {
-  let data = await fetch(customersAPI);
-  let dataJson = await data.json();
-  customers = dataJson.value;
+// Adatok lekérése
+async function fetchData(url) {
+  const response = await fetch(url);
+  const json = await response.json();
+  return json.value;
 }
+
+// Ügyfelek megjelenítése
 async function renderCustomers() {
   try {
-    if (customers.length === 0) {
-      await loadCustomers();
-    }
-
-    contentContainer.innerHTML = "";
-    customers.forEach((customer) => {
-      const customerElement = document.createElement("div");
-      customerElement.classList.add("customer");
-
-      const customerInfo = `
-        <h2>${customer.name}</h2>
-        <p>Customer Number: ${customer.no}</p>
-        <p>Address: ${customer.address}${
-        customer.address2 ? `, ${customer.address2}` : ""
-      }</p>
-        <p>City: ${customer.city}, Postcode: ${customer.postCode}</p>
-      `;
-      customerElement.innerHTML = customerInfo;
-      contentContainer.appendChild(customerElement);
-    });
+    const customers = await fetchData(apiUrls.customers);
+    renderData(customers, renderCustomerElement);
   } catch (error) {
-    console.error("Error rendering customer data:", error);
-    contentContainer.innerHTML = `<p>Error loading customers: ${error.message}</p>`;
+    handleRenderError("customers", error);
   }
 }
 
-//prepare items data for rendering
-let items = [];
-async function loadItems() {
-  let data = await fetch(itemsAPI);
-  let dataJson = await data.json();
-  items = dataJson.value;
-}
+// Elemek megjelenítése
 async function renderItems() {
   try {
-    if (items.length === 0) {
-      await loadItems();
-    }
-    contentContainer.innerHTML = "";
-    items.forEach((item) => {
-      const itemElement = document.createElement("div");
-      itemElement.classList.add("item");
-
-      const itemInfo = `
-          <h2>${item.description}</h2>
-          <p>Item Number: ${item.no}</p>
-          <p>Description: ${item.description}${
-        item.description2 ? `, ${item.description2}` : ""
-      }</p>
-          <p>Unit Price: ${item.unitPrice}</p>
-        `;
-      itemElement.innerHTML = itemInfo;
-
-      contentContainer.appendChild(itemElement);
-    });
+    const items = await fetchData(apiUrls.items);
+    renderData(items, renderItemElement);
   } catch (error) {
-    console.error("Error rendering items data:", error);
-    contentContainer.innerHTML = `<p>Error loading items: ${error.message}</p>`;
+    handleRenderError("items", error);
   }
 }
 
-//prepare sales Quotes data for rendering
-let salesQuotes = [];
-async function loadSalesQuotes() {
-  let data = await fetch(salesQuotesAPI);
-  let dataJson = await data.json();
-  salesQuotes = dataJson.value;
-}
+// Értékesítési ajánlatok megjelenítése
 async function renderSalesQuotes() {
   try {
-    if (salesQuotes.length === 0) {
-      await loadSalesQuotes();
-    }
-
-    contentContainer.innerHTML = "";
-    //Button for new Sales Quote
-    let newSalesQuoteButton = document.createElement("button");
-    newSalesQuoteButton.classList.add("js-New-salesQuote-button");
-    newSalesQuoteButton.textContent = "Add New Sales Quote";
-    contentContainer.appendChild(newSalesQuoteButton);
-
-    newSalesQuoteButton.querySelector(".js-New-salesQuote-button");
-    newSalesQuoteButton.addEventListener("click", async () => {
-      await newSalesQuote();
-    });
-
-    salesQuotes.forEach((salesQuote) => {
-      const salesQuoteElement = document.createElement("div");
-      salesQuoteElement.classList.add("salesQuote");
-
-      let salesQuoteInfo = "";
-
-      salesQuoteInfo += `<h2>Document No: ${salesQuote.no}</h2>`;
-      salesQuoteInfo += `<p>Document Date: ${salesQuote.documentDate}</p>`;
-      salesQuoteInfo += `<p>Due Date: ${salesQuote.dueDate}</p>`;
-      salesQuoteInfo += `<p>Posting Date: ${salesQuote.postingDate}</p>`;
-      salesQuoteInfo += `<p>Sell To Customer Number: ${salesQuote.sellToCustomerNo}</p>`;
-      salesQuoteInfo += `<p>Sell To Customer Name: ${salesQuote.sellToCustomerName}</p>`;
-      salesQuoteInfo += `<p>Sell To Contact: ${salesQuote.selltoContact}</p>`;
-      salesQuoteInfo += `<p>Amount: ${salesQuote.Amount}</p>`;
-
-      let salesLinesButton = document.createElement("button");
-      salesLinesButton.classList.add("js-sales-Lines-button");
-      salesLinesButton.textContent = "More Info";
-
-      salesQuoteElement.appendChild(salesLinesButton);
-      salesQuoteElement.innerHTML += salesQuoteInfo;
-      contentContainer.appendChild(salesQuoteElement);
-
-      // A salesLinesButton-hoz tartozó eseménykezelő
-      salesLinesButton = salesQuoteElement.querySelector(
-        ".js-sales-Lines-button"
-      );
-      salesLinesButton.addEventListener("click", async () => {
-        await renderSalesLines(salesQuote.no);
-      });
-    });
+    const salesQuotes = await fetchData(apiUrls.salesQuotes);
+    renderData(salesQuotes, renderSalesQuoteElement);
+    renderNewSalesQuoteButton(); // Új értékesítési ajánlat gomb megjelenítése
   } catch (error) {
-    // Csatoljuk a többi információt
-    console.error("Error rendering salesQuotes data:", error);
-    contentContainer.innerHTML = `<p>Error loading salesQuotes: ${error.message}</p>`;
-  }
-}
-// prepare Sales Lines data for rendering
-let salesLines = [];
-async function loadSalesLines() {
-  try {
-    let data = await fetch(salesLinesAPI);
-    let dataJson = await data.json();
-    salesLines = dataJson.value;
-  } catch (error) {
-    console.error("Error loading salesLines:", error);
-    contentContainer.innerHTML = `<p>Error loading salesLines: ${error.message}</p>`;
+    handleRenderError("sales quotes", error);
   }
 }
 
+// Ügyfelek, elemek és értékesítési ajánlatok megjelenítésének általános függvénye
+function renderData(data, renderElementFn) {
+  contentContainer.innerHTML = "";
+  data.forEach((item) => {
+    const element = renderElementFn(item);
+    contentContainer.appendChild(element);
+  });
+}
+
+// Egyedi ügyfél elem létrehozása
+function renderCustomerElement(customer) {
+  const element = document.createElement("div");
+  element.classList.add("customer");
+  element.innerHTML = `
+    <h2>${customer.name}</h2>
+    <p>Customer Number: ${customer.no}</p>
+    <p>Address: ${customer.address}${
+    customer.address2 ? `, ${customer.address2}` : ""
+  }</p>
+    <p>City: ${customer.city}, Postcode: ${customer.postCode}</p>
+  `;
+  return element;
+}
+
+// Egyedi elem elem létrehozása
+function renderItemElement(item) {
+  const element = document.createElement("div");
+  element.classList.add("item");
+  element.innerHTML = `
+    <h2>${item.description}</h2>
+    <p>Item Number: ${item.no}</p>
+    <p>Description: ${item.description}${
+    item.description2 ? `, ${item.description2}` : ""
+  }</p>
+    <p>Unit Price: ${item.unitPrice}</p>
+  `;
+  return element;
+}
+
+// Egyedi értékesítési ajánlat elem létrehozása
+function renderSalesQuoteElement(quote) {
+  const element = document.createElement("div");
+  element.classList.add("salesQuote");
+
+  const moreInfoBtn = document.createElement("button");
+  moreInfoBtn.classList.add("js-sales-Lines-button");
+  moreInfoBtn.textContent = "More Info";
+
+  moreInfoBtn.addEventListener("click", async () => {
+    await renderSalesLines(quote.no);
+  });
+
+  element.appendChild(moreInfoBtn);
+
+  const infoContainer = document.createElement("div");
+  infoContainer.innerHTML = `
+    <h2>Document No: ${quote.no}</h2>
+    <p>Document Date: ${quote.documentDate}</p>
+    <p>Due Date: ${quote.dueDate}</p>
+    <p>Posting Date: ${quote.postingDate}</p>
+    <p>Sell To Customer Number: ${quote.sellToCustomerNo}</p>
+    <p>Sell To Customer Name: ${quote.sellToCustomerName}</p>
+    <p>Sell To Contact: ${quote.selltoContact}</p>
+    <p>Amount: ${quote.Amount}</p>
+  `;
+
+  element.appendChild(infoContainer);
+
+  return element;
+}
+
+// Új értékesítési ajánlat gomb megjelenítése
+function renderNewSalesQuoteButton() {
+  const newSalesQuoteButton = document.createElement("button");
+  newSalesQuoteButton.classList.add("js-New-salesQuote-button");
+  newSalesQuoteButton.textContent = "Add New Sales Quote";
+  newSalesQuoteButton.addEventListener("click", newSalesQuote);
+  contentContainer.appendChild(newSalesQuoteButton);
+}
+
+// Általános hiba kezelése
+function handleRenderError(dataType, error) {
+  console.error(`Error rendering ${dataType} data:`, error);
+  contentContainer.innerHTML = `<p>Error loading ${dataType}: ${error.message}</p>`;
+}
+
+// Sales Lines megjelenítése
 async function renderSalesLines(salesQuoteNo) {
   try {
-    if (salesLines.length === 0) {
-      await loadSalesLines();
-    }
+    const salesLines = await fetchData(apiUrls.salesLines);
     contentContainer.innerHTML = "";
-    //Button for new SalesLine
-    let newSalesLineButton = document.createElement("button");
-    newSalesLineButton.classList.add(".js-New-salesLine-button");
-    newSalesLineButton.textContent = "Add New Sales Line";
-    contentContainer.appendChild(newSalesLineButton);
-
-    newSalesLineButton.querySelector(".js-New-salesLine-button");
-    newSalesLineButton.addEventListener("click", async () => {
-      await newSalesLine(salesQuoteNo);
-    });
-    salesLines.forEach((salesLine) => {
-      if (salesLine.documentNo === salesQuoteNo) {
-        const salesLineElement = document.createElement("div");
-        salesLineElement.classList.add("salesLine");
-
-        // Additional information for Sales Lines
-        const salesLineInfo = `
-        <h2>Description: ${salesLine.description} </h2>
-        <p>Document No: ${salesLine.documentNo} </p>
-        <p>Line No: ${salesLine.lineNo} </p>
-        <p>quantity: ${salesLine.quantity} </p>
-        <p>type: ${salesLine.type} </p>
-        <p>unit price: ${salesLine.unitPrice}</p>
-      `;
-        salesLineElement.innerHTML = salesLineInfo;
-
-        contentContainer.appendChild(salesLineElement);
-      }
-    });
+    renderData(
+      salesLines.filter((line) => line.documentNo === salesQuoteNo),
+      renderSalesLineElement
+    );
+    renderNewSalesLineButton(salesQuoteNo);
   } catch (error) {
-    console.error("Error rendering sales lines data:", error);
-    contentContainer.innerHTML = `<p>Error loading sales lines: ${error.message}</p>`;
+    handleRenderError("sales lines", error);
   }
 }
 
-//-----------------------------------FUNCTIONS FOR POST DATAS TO BC SERVER--------------------------------------------//
+// Új értékesítési sor gomb megjelenítése
+function renderNewSalesLineButton(salesQuoteNo) {
+  const newSalesLineButton = document.createElement("button");
+  newSalesLineButton.classList.add("js-New-salesLine-button");
+  newSalesLineButton.textContent = "Add New Sales Line";
+  newSalesLineButton.addEventListener(
+    "click",
+    async () => await newSalesLine(salesQuoteNo)
+  );
+  contentContainer.appendChild(newSalesLineButton);
+}
 
+// Egyedi értékesítési sor elem létrehozása
+function renderSalesLineElement(salesLine) {
+  const element = document.createElement("div");
+  element.classList.add("salesLine");
+  element.innerHTML = `
+    <h2>Description: ${salesLine.description}</h2>
+    <p>Document No: ${salesLine.documentNo}</p>
+    <p>Line No: ${salesLine.lineNo}</p>
+    <p>quantity: ${salesLine.quantity}</p>
+    <p>type: ${salesLine.type}</p>
+    <p>unit price: ${salesLine.unitPrice}</p>
+  `;
+  return element;
+}
+
+// Új értékesítési ajánlat létrehozása
 function newSalesQuote() {
   contentContainer.innerHTML = `
-  <form action ="/api/PostSalesQuotes" method="POST">
+    <form action="/api/PostSalesQuotes" method="POST">
       <input type="number" name="sellToCustomerNo" placeholder="Enter Sell to Customer No:" />
       <input type="text" name="sellToContact" placeholder="Enter Sell to Contact name:" />
       <input type="date" name="documentDate" placeholder="Enter Document date:" />
       <input type="date" name="dueDate" placeholder="Enter due Date:" />
       <input type="submit" value="Create New Sales Quote" />
-  </form>
-  `;
-}
-
-function newSalesLine(salesQuoteNo) {
-  contentContainer.innerHTML = `
-    <form action="/api/PostSalesLines" method="POST">
-        <input type="number" name="documentNo" value=${salesQuoteNo} readonly>
-        <input type="text" name="type" placeholder="Enter SalesLine type of transaction:" />
-        <input type="text" name="no" placeholder= "Enter SalesLine no:" />
-        <input type="description" name="description" placeholder="Enter description" />
-        <input type="number" name="quantity" placeholder="Enter quantity:" />
-        <input type="number" name="unitPrice" placeholder="Enter unit price:" />
-        <input type="submit" value="Create New Sales Line" />
-
     </form>
   `;
 }
 
-customersButton.addEventListener("click", renderCustomers);
-itemsButton.addEventListener("click", renderItems);
-salesQuotesButton.addEventListener("click", renderSalesQuotes);
+// Új értékesítési sor létrehozása
+function newSalesLine(salesQuoteNo) {
+  contentContainer.innerHTML = `
+    <form action="/api/PostSalesLines" method="POST">
+      <input type="number" name="documentNo" value="${salesQuoteNo}" readonly>
+      <input type="text" name="type" placeholder="Enter SalesLine type of transaction:" />
+      <input type="text" name="no" placeholder="Enter SalesLine no:" />
+      <input type="description" name="description" placeholder="Enter description" />
+      <input type="number" name="quantity" placeholder="Enter quantity:" />
+      <input type="number" name="unitPrice" placeholder="Enter unit price:" />
+      <input type="submit" value="Create New Sales Line" />
+    </form>
+  `;
+}
+
+// Eseménykezelők hozzáadása a gombokhoz
+customersBtn.addEventListener("click", renderCustomers);
+itemsBtn.addEventListener("click", renderItems);
+salesQuotesBtn.addEventListener("click", renderSalesQuotes);
