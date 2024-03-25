@@ -4,8 +4,8 @@ const itemsBtn = document.querySelector(".js-items-button");
 const salesQuotesBtn = document.querySelector(".js-salesQuotes-button");
 const salesLinesBtn = document.querySelector(".js-sales-Lines-button");
 const contentContainer = document.querySelector(".contentContainer");
-const serverHost = window.location.hostname;
-const serverPort = window.location.port;
+const serverHost = "localhost";
+const serverPort = 3000;
 const apiUrls = {
   customers: `http://${serverHost}:${serverPort}/api/customers`,
   items: `http://${serverHost}:${serverPort}/api/items`,
@@ -44,6 +44,7 @@ async function renderItems() {
 async function renderSalesQuotes() {
   try {
     const salesQuotes = await fetchData(apiUrls.salesQuotes);
+    contentContainer.innerHTML = "";
     renderData(salesQuotes, renderSalesQuoteElement);
     renderNewSalesQuoteButton(); // Új értékesítési ajánlat gomb megjelenítése
   } catch (error) {
@@ -128,7 +129,10 @@ function renderNewSalesQuoteButton() {
   newSalesQuoteButton.classList.add("js-New-salesQuote-button");
   newSalesQuoteButton.textContent = "Add New Sales Quote";
   newSalesQuoteButton.addEventListener("click", newSalesQuote);
-  contentContainer.appendChild(newSalesQuoteButton);
+  contentContainer.insertBefore(
+    newSalesQuoteButton,
+    contentContainer.firstChild
+  );
 }
 
 // Általános hiba kezelése
@@ -161,7 +165,10 @@ function renderNewSalesLineButton(salesQuoteNo) {
     "click",
     async () => await newSalesLine(salesQuoteNo)
   );
-  contentContainer.appendChild(newSalesLineButton);
+  contentContainer.insertBefore(
+    newSalesLineButton,
+    contentContainer.firstChild
+  );
 }
 
 // Egyedi értékesítési sor elem létrehozása
@@ -181,6 +188,7 @@ function renderSalesLineElement(salesLine) {
 
 // Új értékesítési ajánlat létrehozása
 function newSalesQuote() {
+  let customers = fetchData(apiUrls.customers);
   contentContainer.innerHTML = `
     <form action="/api/PostSalesQuotes" method="POST">
       <input type="number" name="sellToCustomerNo" placeholder="Enter Sell to Customer No:" />
