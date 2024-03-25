@@ -1,21 +1,74 @@
 import React, { useState, useEffect } from "react";
 import fetchData from "../utils/fetchData";
 
-function NewSalesQuoteForm({ apiUrls, onSubmit }) {
+function NewSalesQuoteForm({ onSubmit, apiUrls }) {
   const [sellToCustomerNo, setSellToCustomerNo] = useState("");
   const [sellToContact, setSellToContact] = useState("");
   const [documentDate, setDocumentDate] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [customers, setCustomers] = useState([]);
 
+  /*const fetchContacts = async () => {
+    try {
+      const data = await fetch(`http://localhost:3000/api/contacts`).then(
+        (data) => data.json()
+      );
+      setSellToContact(
+        data.value.map((contact) => ({
+          name: contact.name,
+          CompName: contact.CompName,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching Contacts:", error);
+    }
+  };*/
+
+  const fetchContacts = async () => {
+    try {
+      // Ügyfél nevének lekérése az aktuális `sellToCustomerNo` alapján
+      const currentCustomer = customers.find(
+        (customer) => customer.no === sellToCustomerNo
+      );
+
+      if (!currentCustomer) {
+        console.error("Customer not found!");
+        return;
+      }
+
+      // Kapcsolatok lekérése
+      const contactsData = await fetch(
+        `http://localhost:3000/api/contacts`
+      ).then((response) => response.json());
+
+      // Aktuális ügyfél nevével megegyező kapcsolatok kiválogatása
+      const filteredContacts = contactsData.value.filter(
+        (contact) => contact.CompName === currentCustomer.name
+      );
+
+      // Kapcsolatok beállítása az állapotba
+      setSellToContact(
+        filteredContacts.map((contact) => ({
+          name: contact.name,
+          CompName: contact.CompName,
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching Contacts:", error);
+    }
+  };
+
   const fetchCustomers = async () => {
+    debugger;
     try {
       const data = await fetch(`http://localhost:3000/api/customers`).then(
         (data) => data.json()
       );
+
       setCustomers(
         data.value.map((customer) => ({ no: customer.no, name: customer.name }))
       );
+      fetchContacts();
     } catch (error) {
       console.error("Error fetching customers:", error);
     }
@@ -56,9 +109,19 @@ function NewSalesQuoteForm({ apiUrls, onSubmit }) {
       <label htmlFor="sellToCtact">
         Sell to Contact:
         <select
-          onChange={(e) => sellToContact(e.target.value)}
+          onChange={(e) => setSellToContact(e.target.value)}
           name="selltoCtact"
-        ></select>
+        >
+          {sellToContact.length > 0 ? (
+            sellToContact.map((selltoCont) => (
+              <option key={selltoCont.no} value={selltoCont.name}>
+                {selltoCont.name}
+              </option>
+            ))
+          ) : (
+            <option>Loading contacts...</option>
+          )}
+        </select>
       </label>
       <label htmlFor="documentDate">
         Document Date:
