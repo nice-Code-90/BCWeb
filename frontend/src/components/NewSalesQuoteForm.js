@@ -7,6 +7,7 @@ function NewSalesQuoteForm({ onSubmit }) {
   const [dueDate, setDueDate] = useState("");
 
   const handleSubmit = (event) => {
+    debugger;
     event.preventDefault();
     onSubmit({
       sellToCustomerNo,
