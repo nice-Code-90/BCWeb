@@ -1,10 +1,12 @@
 const express = require("express");
 const axios = require("axios");
 const app = express();
+const cors = require("cors");
 app.use(express.static("frontend"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(cors());
 
 // BC tenant and Customers data
 //REPLACE THESE DATAS WITH YOUR OWN BC ENVIRONMENT VARIABLES

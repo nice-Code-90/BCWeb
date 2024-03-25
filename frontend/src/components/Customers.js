@@ -5,17 +5,16 @@ import CustomerElement from "./CustomerElement";
 function Customers({ apiUrls }) {
   const [customers, setCustomers] = useState([]);
 
+  const fetchCustomers = async () => {
+    try {
+      const data = await fetchData(apiUrls.customers);
+
+      setCustomers(data);
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    }
+  };
   useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const data = await fetchData(apiUrls.customers);
-
-        setCustomers(data);
-      } catch (error) {
-        console.error("Error fetching customers:", error);
-      }
-    };
-
     fetchCustomers();
   }, [apiUrls]);
 

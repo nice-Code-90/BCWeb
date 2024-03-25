@@ -1,10 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import fetchData from "../utils/fetchData";
 
-function NewSalesQuoteForm({ onSubmit }) {
+function NewSalesQuoteForm({ apiUrls, onSubmit }) {
   const [sellToCustomerNo, setSellToCustomerNo] = useState("");
   const [sellToContact, setSellToContact] = useState("");
   const [documentDate, setDocumentDate] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [customers, setCustomers] = useState([]);
+
+  const fetchCustomers = async () => {
+    try {
+      const data = await fetch(`http://localhost:3000/api/customers`).then(
+        (data) => data.json()
+      );
+      setCustomers(
+        data.value.map((customer) => ({ no: customer.no, name: customer.name }))
+      );
+    } catch (error) {
+      console.error("Error fetching customers:", error);
+    }
+  };
+  useEffect(() => {
+    fetchCustomers();
+  }, [apiUrls]);
+
+  console.log(customers);
 
   const handleSubmit = (event) => {
     debugger;
@@ -20,27 +40,25 @@ function NewSalesQuoteForm({ onSubmit }) {
   return (
     <form onSubmit={handleSubmit}>
       <h2>Create New Sales Quote</h2>
-      <label htmlFor="sellToCustomerNo">
-        Sell to Customer No:
-        <input
-          type="number"
-          id="sellToCustomerNo"
-          value={sellToCustomerNo}
+      <label htmlFor="sellToCustno">
+        Sell to Customer Name:
+        <select
           onChange={(e) => setSellToCustomerNo(e.target.value)}
-          placeholder="Enter Sell to Customer No"
-          required
-        />
+          name="sellToCustno"
+        >
+          {customers.map((customer) => (
+            <option key={customer.no} value={customer.no}>
+              {customer.name}
+            </option>
+          ))}
+        </select>
       </label>
-      <label htmlFor="sellToContact">
+      <label htmlFor="sellToCtact">
         Sell to Contact:
-        <input
-          type="text"
-          id="sellToContact"
-          value={sellToContact}
-          onChange={(e) => setSellToContact(e.target.value)}
-          placeholder="Enter Sell to Contact name"
-          required
-        />
+        <select
+          onChange={(e) => sellToContact(e.target.value)}
+          name="selltoCtact"
+        ></select>
       </label>
       <label htmlFor="documentDate">
         Document Date:
