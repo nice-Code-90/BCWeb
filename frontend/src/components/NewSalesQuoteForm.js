@@ -3,10 +3,18 @@ import fetchData from "../utils/fetchData";
 
 function NewSalesQuoteForm({ onSubmit, apiUrls }) {
   const [sellToCustomerNo, setSellToCustomerNo] = useState("");
-  const [sellToContact, setSellToContact] = useState("");
+  const [sellToContact, setSellToContact] = useState([]);
   const [documentDate, setDocumentDate] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [customers, setCustomers] = useState([]);
+
+  const handleCustomerChange = (customerNo) => {
+    setSellToCustomerNo(customerNo);
+    // Az első kapcsolat kiválasztása alapértelmezettként, ha van
+    if (customers.length > 0) {
+      setSellToContact([customers[0]]);
+    }
+  };
 
   const fetchContacts = async () => {
     try {
@@ -58,16 +66,16 @@ function NewSalesQuoteForm({ onSubmit, apiUrls }) {
   };
   useEffect(() => {
     fetchCustomers();
-  }, [apiUrls]);
+  }, [sellToCustomerNo]);
 
   console.log(customers);
 
   const handleSubmit = (event) => {
-    debugger;
     event.preventDefault();
     onSubmit({
       sellToCustomerNo,
-      sellToContact,
+      sellToContact:
+        sellToContact.length > 0 ? sellToContact[sellToContact.length - 1] : "", // Csak az utolsó kiválasztott nevet küldi el
       documentDate,
       dueDate,
     });
@@ -79,7 +87,7 @@ function NewSalesQuoteForm({ onSubmit, apiUrls }) {
       <label htmlFor="sellToCustno">
         Sell to Customer Name:
         <select
-          onChange={(e) => setSellToCustomerNo(e.target.value)}
+          onChange={(e) => handleCustomerChange(e.target.value)}
           name="sellToCustno"
         >
           {customers.map((customer) => (
@@ -92,7 +100,7 @@ function NewSalesQuoteForm({ onSubmit, apiUrls }) {
       <label htmlFor="sellToCtact">
         Sell to Contact:
         <select
-          onChange={(e) => setSellToContact(e.target.value)}
+          onChange={(e) => setSellToContact([...sellToContact, e.target.value])}
           name="selltoCtact"
         >
           {sellToContact.length > 0 ? (
