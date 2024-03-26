@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import fetchData from "../utils/fetchData";
-import CustomerElement from "./CustomerElement";
+import fetchData from "../../utils/fetchData";
+import CustomerElement from "./CustomerElement/CustomerElement";
 
 function Customers({ apiUrls }) {
   const [customers, setCustomers] = useState([]);

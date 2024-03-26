@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import fetchData from "../utils/fetchData";
-import ItemElement from "./ItemElement";
+import fetchData from "../../utils/fetchData";
+import ItemElement from "./ItemElement/ItemElement";
 
 function Items({ apiUrls }) {
   const [items, setItems] = useState([]);

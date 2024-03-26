@@ -8,14 +8,6 @@ function NewSalesQuoteForm({ onSubmit, apiUrls }) {
   const [dueDate, setDueDate] = useState("");
   const [customers, setCustomers] = useState([]);
 
-  const handleCustomerChange = (customerNo) => {
-    setSellToCustomerNo(customerNo);
-    // Az első kapcsolat kiválasztása alapértelmezettként, ha van
-    if (customers.length > 0) {
-      setSellToContact([customers[0]]);
-    }
-  };
-
   const fetchContacts = async () => {
     try {
       // Ügyfél nevének lekérése az aktuális `sellToCustomerNo` alapján
@@ -48,6 +40,15 @@ function NewSalesQuoteForm({ onSubmit, apiUrls }) {
     } catch (error) {
       console.error("Error fetching Contacts:", error);
     }
+  };
+
+  const handleCustomerChange = (customerNo) => {
+    setSellToCustomerNo(customerNo);
+    // Az első kapcsolat kiválasztása alapértelmezettként, ha van
+    const currentCustomer = customers.find(
+      (customer) => customer.no === customerNo
+    );
+    setSellToContact([currentCustomer.name]);
   };
 
   const fetchCustomers = async () => {

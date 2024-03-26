@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Header from "./components/Header";
-import Customers from "./components/Customers";
-import Items from "./components/Items";
-import SalesQuotes from "./components/SalesQuotes";
+import Customers from "./components/Customers/Customers";
+import Items from "./components/Items/Items";
+import SalesQuotes from "./components/SalesQuotes/SalesQuotes";
 
 const apiUrls = {
   customers: `http://${window.location.hostname}:${3000}/api/customers`,
