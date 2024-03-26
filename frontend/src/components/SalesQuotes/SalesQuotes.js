@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import fetchData from "../../utils/fetchData";
 import SalesQuoteElement from "./SalesQuoteElement/SalesQuoteElement";
-import NewSalesQuoteForm from "../NewSalesQuoteForm";
+import NewSalesQuoteForm from "./NewSalesQuotesForm/NewSalesQuoteForm";
 
 function SalesQuotes({ apiUrls }) {
   const [salesQuotes, setSalesQuotes] = useState([]);

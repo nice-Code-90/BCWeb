@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import fetchData from "../utils/fetchData";
+import fetchData from "../../../utils/fetchData";
 
 function NewSalesQuoteForm({ onSubmit, apiUrls }) {
   const [sellToCustomerNo, setSellToCustomerNo] = useState("");

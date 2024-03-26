@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import fetchData from "../../../utils/fetchData";
 import SalesLineElement from "./SalesLineElement/SalesLineElement";
+import NewSalesLineForm from "./NewSalesLineForm/NewSalesLineForm";
 
 function SalesQuoteElement({ quote, apiUrls }) {
   const [salesLines, setSalesLines] = useState([]);
@@ -52,14 +53,15 @@ function SalesQuoteElement({ quote, apiUrls }) {
       <button onClick={handleShowSalesLines}>Show Sales Lines</button>
 
       {isAddingNewSalesLine ? (
-        <NewSalesLineForm 
-          onSubmit={(newLineData) => }
+        <NewSalesLineForm
+          salesQuoteNO={quote.no}
+          onSubmit={(newLineData) => handleNewSalesLineSubmit(newLineData)}
+        />
+      ) : (
+        <button onClick={() => setIsAddingNewSalesLine(true)}>
+          New Sales Line for {quote.sellToCustomerName}
+        </button>
       )}
-
-
-      <button onClick={() => setIsAddingNewSalesLine(true)}>
-        New Sales Line for ${quote.sellToCustomerName}
-      </button>
 
       {showSalesLines && (
         <div className="salesLines">
