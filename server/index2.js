@@ -2,14 +2,13 @@ const express = require("express");
 const axios = require("axios");
 const app = express();
 const cors = require("cors");
-app.use(express.static("frontend"));
+app.use(express.static("frontendStatic"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
-// BC tenant and Customers data
-//REPLACE THESE DATAS WITH YOUR OWN BC ENVIRONMENT VARIABLES
+// BC tenant and Customers data : REPLACE ENV VARIABLES FROM YOUR BUSINESS CENTRAL ENVIRONMENT
 const userName = "";
 const companyName = "";
 const environment = "";
@@ -25,6 +24,7 @@ const customersAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/
 const salesLinesAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/SandBox/api/${companyName}/${userName}/v1.0/companies(${companyID})/salesLines`;
 const salesHeadersAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/SandBox/api/${companyName}/${userName}/v1.0/companies(${companyID})/salesHeaders`;
 const itemsAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/${environment}/api/${companyName}/${userName}/v1.0/companies(${companyID})/items`;
+const sellToContactsAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/${environment}/api/${companyName}/${userName}/v1.0/companies(${companyID})/contacts`;
 
 // Acces token
 async function getToken() {
@@ -113,6 +113,21 @@ async function getItems() {
     return items;
   } catch (error) {
     console.error("An error occurred when retrieving items:", error);
+    throw error;
+  }
+}
+async function getSelltoContacts() {
+  try {
+    const response = await axios.get(`${sellToContactsAPI}`, {
+      headers: {
+        Authorization: `Bearer ${myToken}`,
+      },
+    });
+    const sellToContacts = response.data;
+    console.log("sell to contacts:", sellToContacts);
+    return sellToContacts;
+  } catch (error) {
+    console.error("An error occurred when tertieving sellToContacts:", error);
     throw error;
   }
 }
@@ -205,6 +220,29 @@ app.get("/api/items", async (req, res) => {
   } catch (error) {
     console.log("Error at requesting items data:", error);
     res.status(500).send("Error fetching items");
+  }
+});
+
+//sell to Contacts
+app.get("/api/contacts", async (req, res) => {
+  if (myToken === "") {
+    (async () => {
+      try {
+        myToken = await getToken();
+        console.log("token:", myToken);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    })();
+  }
+  await waitForToken();
+
+  try {
+    const contacts = await getSelltoContacts();
+    res.json(contacts);
+  } catch (error) {
+    console.log("Error at requesting sell to Contacts data:", error);
+    res.status(500).send("Error fetching sell to contacts");
   }
 });
 

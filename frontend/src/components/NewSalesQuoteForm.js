@@ -8,22 +8,6 @@ function NewSalesQuoteForm({ onSubmit, apiUrls }) {
   const [dueDate, setDueDate] = useState("");
   const [customers, setCustomers] = useState([]);
 
-  /*const fetchContacts = async () => {
-    try {
-      const data = await fetch(`http://localhost:3000/api/contacts`).then(
-        (data) => data.json()
-      );
-      setSellToContact(
-        data.value.map((contact) => ({
-          name: contact.name,
-          CompName: contact.CompName,
-        }))
-      );
-    } catch (error) {
-      console.error("Error fetching Contacts:", error);
-    }
-  };*/
-
   const fetchContacts = async () => {
     try {
       // Ügyfél nevének lekérése az aktuális `sellToCustomerNo` alapján
@@ -59,7 +43,6 @@ function NewSalesQuoteForm({ onSubmit, apiUrls }) {
   };
 
   const fetchCustomers = async () => {
-    debugger;
     try {
       const data = await fetch(`http://localhost:3000/api/customers`).then(
         (data) => data.json()
