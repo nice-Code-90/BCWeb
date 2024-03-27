@@ -25,6 +25,7 @@ const salesLinesAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}
 const salesHeadersAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/SandBox/api/${companyName}/${userName}/v1.0/companies(${companyID})/salesHeaders`;
 const itemsAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/${environment}/api/${companyName}/${userName}/v1.0/companies(${companyID})/items`;
 const sellToContactsAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/${environment}/api/${companyName}/${userName}/v1.0/companies(${companyID})/contacts`;
+const resourcesAPI = `https://api.businesscentral.dynamics.com/v2.0/${tenantID}/${environment}/api/${companyName}/${userName}/v1.0/companies(${companyID})/resources`;
 
 // Acces token
 async function getToken() {
@@ -132,6 +133,23 @@ async function getSelltoContacts() {
   }
 }
 
+async function getResources() {
+  try {
+    const response = await axios.get(`${resourcesAPI}`, {
+      headers: {
+        Authorization: `Bearer ${myToken}`,
+      },
+    });
+
+    const resources = response.data;
+    console.log("Resources:", resources);
+    return resources;
+  } catch (error) {
+    console.error("An error occurred when retrieving resources:", error);
+    throw error;
+  }
+}
+
 //Get customers
 async function getCustomers() {
   try {
@@ -197,6 +215,28 @@ app.get("/api/salesQuotes", async (req, res) => {
   } catch (error) {
     console.log("Error at requesting Sales Quotes data:", error);
     res.status(500).send("Error fetching sales quotes");
+  }
+});
+//Resources
+app.get("/api/resources", async (req, res) => {
+  if (myToken === "") {
+    (async () => {
+      try {
+        myToken = await getToken();
+        console.log("token:", myToken);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    })();
+  }
+  await waitForToken();
+
+  try {
+    const items = await getResources();
+    res.json(items);
+  } catch (error) {
+    console.log("Error at requesting resources data:", error);
+    res.status(500).send("Error fetching resources");
   }
 });
 

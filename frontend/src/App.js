@@ -10,6 +10,7 @@ const apiUrls = {
   salesQuotes: `http://${window.location.hostname}:${3000}/api/salesQuotes`,
   salesLines: `http://${window.location.hostname}:${3000}/api/salesLines`,
   contacts: `http://${window.location.hostname}:${3000}/api/contacts`,
+  resources: `http://${window.location.hostname}:${3000}/api/resources`,
 };
 
 function App() {
