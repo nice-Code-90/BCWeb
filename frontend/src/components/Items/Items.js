@@ -1,24 +1,7 @@
-import React, { useState, useEffect } from "react";
-import fetchData from "../../utils/fetchData";
+import React from "react";
 import ItemElement from "./ItemElement/ItemElement";
 
-function Items({ apiUrls }) {
-  const [items, setItems] = useState([]);
-
-  useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const data = await fetchData(apiUrls.items);
-
-        setItems(data);
-      } catch (error) {
-        console.error("Error fetching items", error);
-      }
-    };
-
-    fetchItems();
-  }, [apiUrls]);
-
+function Items({ items }) {
   return (
     <div className="items">
       <h2>Items</h2>

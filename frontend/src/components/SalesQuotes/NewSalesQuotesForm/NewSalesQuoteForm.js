@@ -1,40 +1,39 @@
 import React, { useState, useEffect } from "react";
 import fetchData from "../../../utils/fetchData";
 
-function NewSalesQuoteForm({ onSubmit, apiUrls }) {
-  const [sellToCustomerNo, setSellToCustomerNo] = useState("");
-  const [sellToContact, setSellToContact] = useState([]);
+function NewSalesQuoteForm({
+  apiUrls,
+  customers,
+  onTabChange,
+  setPostedNewQuote,
+}) {
+  const [sellToCustomerNo, setSellToCustomerNo] = useState(10000);
+  const [sellToContact, setSellToContact] = useState([{ name: "-", key: 0 }]);
   const [documentDate, setDocumentDate] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [customers, setCustomers] = useState([]);
 
-  const fetchContacts = async () => {
+  let currentCustomer = customers[0];
+  const fetchContacts = async (selectedCustomer) => {
     try {
-      // Ügyfél nevének lekérése az aktuális `sellToCustomerNo` alapján
-      const currentCustomer = customers.find(
-        (customer) => customer.no === sellToCustomerNo
-      );
-
-      if (!currentCustomer) {
+      if (!selectedCustomer) {
         console.error("Customer not found!");
         return;
       }
-
       // Kapcsolatok lekérése
-      const contactsData = await fetch(
-        `http://localhost:3000/api/contacts`
-      ).then((response) => response.json());
+      const contactsData = await fetchData(apiUrls.contacts);
 
       // Aktuális ügyfél nevével megegyező kapcsolatok kiválogatása
-      const filteredContacts = contactsData.value.filter(
-        (contact) => contact.CompName === currentCustomer.name
+      const filteredContacts = contactsData.filter(
+        (contact) => contact.CompName === selectedCustomer.name
       );
 
       // Kapcsolatok beállítása az állapotba
+
       setSellToContact(
-        filteredContacts.map((contact) => ({
+        filteredContacts.map((contact, index) => ({
           name: contact.name,
           CompName: contact.CompName,
+          key: index,
         }))
       );
     } catch (error) {
@@ -42,44 +41,47 @@ function NewSalesQuoteForm({ onSubmit, apiUrls }) {
     }
   };
 
+  const handleContactChange = (e) => {
+    const selectedValue = e.target.value;
+    setSellToContact(
+      sellToContact.map((contact) => ({
+        ...contact,
+        name: contact.name === selectedValue ? selectedValue : contact.name,
+      }))
+    );
+  };
+
   const handleCustomerChange = (customerNo) => {
     setSellToCustomerNo(customerNo);
-    // Az első kapcsolat kiválasztása alapértelmezettként, ha van
-    const currentCustomer = customers.find(
+    const selectedCustomer = customers.find(
       (customer) => customer.no === customerNo
     );
-    setSellToContact([currentCustomer.name]);
+    fetchContacts(selectedCustomer);
   };
-
-  const fetchCustomers = async () => {
-    try {
-      const data = await fetch(`http://localhost:3000/api/customers`).then(
-        (data) => data.json()
-      );
-
-      setCustomers(
-        data.value.map((customer) => ({ no: customer.no, name: customer.name }))
-      );
-      fetchContacts();
-    } catch (error) {
-      console.error("Error fetching customers:", error);
-    }
-  };
-  useEffect(() => {
-    fetchCustomers();
-  }, [sellToCustomerNo]);
 
   console.log(customers);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    onSubmit({
-      sellToCustomerNo,
-      sellToContact:
-        sellToContact.length > 0 ? sellToContact[sellToContact.length - 1] : "", // Csak az utolsó kiválasztott nevet küldi el
-      documentDate,
-      dueDate,
-    });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await fetch(`http://localhost:3000/api/PostSalesQuotes`, {
+        method: "POST",
+        body: JSON.stringify({
+          documentType: "Quote",
+          no: "",
+          sellToCustomerNo: sellToCustomerNo,
+          documentDate: documentDate,
+          dueDate: dueDate,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    setPostedNewQuote(true);
+    onTabChange("salesQuotes");
   };
 
   return (
@@ -100,11 +102,8 @@ function NewSalesQuoteForm({ onSubmit, apiUrls }) {
       </label>
       <label htmlFor="sellToCtact">
         Sell to Contact:
-        <select
-          onChange={(e) => setSellToContact([...sellToContact, e.target.value])}
-          name="selltoCtact"
-        >
-          {sellToContact.length > 0 ? (
+        <select onChange={(e) => handleContactChange(e)} name="selltoCtact">
+          {Array.isArray(sellToContact) ? (
             sellToContact.map((selltoCont) => (
               <option key={selltoCont.no} value={selltoCont.name}>
                 {selltoCont.name}

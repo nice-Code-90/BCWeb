@@ -1,22 +1,10 @@
-import React, { useState, useEffect } from "react";
-import fetchData from "../../utils/fetchData";
+import React from "react";
 import CustomerElement from "./CustomerElement/CustomerElement";
 
-function Customers({ apiUrls }) {
-  const [customers, setCustomers] = useState([]);
-
-  const fetchCustomers = async () => {
-    try {
-      const data = await fetchData(apiUrls.customers);
-
-      setCustomers(data);
-    } catch (error) {
-      console.error("Error fetching customers:", error);
-    }
-  };
-  useEffect(() => {
-    fetchCustomers();
-  }, [apiUrls]);
+function Customers({ customers }) {
+  if (customers.length === 0) {
+    return <p>Töltés...</p>;
+  }
 
   return (
     <div className="customers">
@@ -27,5 +15,4 @@ function Customers({ apiUrls }) {
     </div>
   );
 }
-
 export default Customers;

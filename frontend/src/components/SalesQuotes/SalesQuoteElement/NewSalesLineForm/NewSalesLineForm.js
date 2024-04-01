@@ -43,11 +43,7 @@ function NewSalesLineForm({ onSubmit, apiUrls, salesQuoteNO }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-     onSubmit({
-        onSubmit({
-          
-        })
-     })
+    onSubmit({});
   };
 
   const handleNOChange = () => {};

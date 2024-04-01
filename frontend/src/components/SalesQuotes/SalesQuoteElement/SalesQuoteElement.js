@@ -1,11 +1,25 @@
-import React, { useState } from "react";
-import fetchData from "../../../utils/fetchData";
-import SalesLineElement from "./SalesLineElement/SalesLineElement";
-import NewSalesLineForm from "./NewSalesLineForm/NewSalesLineForm";
+function SalesQuoteElement({ salesQuote, onTabChange }) {
+  return (
+    <div className="salesQuote">
+      <h2>Document No: {salesQuote.no}</h2>
+      <p>Document Date: {salesQuote.documentDate}</p>
+      <p>Due Date: {salesQuote.dueDate}</p>
+      <p>Posting Date: {salesQuote.postingDate}</p>
+      <p>Sell To Customer Number: {salesQuote.sellToCustomerNo}</p>
+      <p>Sell To Customer Name: {salesQuote.sellToCustomerName}</p>
+      <p>Sell To Contact: {salesQuote.selltoContact}</p>
+      <p>Amount: {salesQuote.Amount}</p>
+      <button onClick={() => onTabChange("SalesLines")}>
+        Show Sales Lines
+      </button>
+      <button>Delete This Quote</button>
+    </div>
+  );
+}
 
-function SalesQuoteElement({ quote, apiUrls }) {
-  const [salesLines, setSalesLines] = useState([]);
+export default SalesQuoteElement;
 
+/*
   const [showSalesLines, setShowSalesLines] = useState(false);
   const [isAddingNewSalesLine, setIsAddingNewSalesLine] = useState(false);
 
@@ -40,19 +54,10 @@ function SalesQuoteElement({ quote, apiUrls }) {
     setSalesLines(data);
   };
 
-  return (
-    <div className="salesQuote">
-      <h2>Document No: {quote.no}</h2>
-      <p>Document Date: {quote.documentDate}</p>
-      <p>Due Date: {quote.dueDate}</p>
-      <p>Posting Date: {quote.postingDate}</p>
-      <p>Sell To Customer Number: {quote.sellToCustomerNo}</p>
-      <p>Sell To Customer Name: {quote.sellToCustomerName}</p>
-      <p>Sell To Contact: {quote.selltoContact}</p>
-      <p>Amount: {quote.Amount}</p>
-      <button onClick={handleShowSalesLines}>Show Sales Lines</button>
 
-      {isAddingNewSalesLine ? (
+
+
+  {isAddingNewSalesLine ? (
         <NewSalesLineForm
           salesQuoteNO={quote.no}
           onSubmit={(newLineData) => handleNewSalesLineSubmit(newLineData)}
@@ -74,8 +79,4 @@ function SalesQuoteElement({ quote, apiUrls }) {
           ))}
         </div>
       )}
-    </div>
-  );
-}
-
-export default SalesQuoteElement;
+*/
