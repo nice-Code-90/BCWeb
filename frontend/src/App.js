@@ -5,6 +5,7 @@ import ItemComponent from "./components/Items/Items";
 import SalesQuoteComponent from "./components/SalesQuotes/SalesQuotes";
 import NewSalesQuoteForm from "./components/SalesQuotes/NewSalesQuotesForm/NewSalesQuoteForm";
 import fetchData from "./utils/fetchData";
+import SalesLineList from "./components/SalesQuotes/SalesQuoteElement/SalesLineElement/SalesLineList";
 
 const apiUrls = {
   customers: `http://${window.location.hostname}:${3000}/api/customers`,
@@ -25,6 +26,8 @@ function App() {
   const [renderedCustomers, setRenderedCustomers] = useState(false);
   const [renderedItems, setRenderedItems] = useState(false);
   const [postedNewQuote, setPostedNewQuote] = useState(false);
+  const [currentCustomerForSalesLines, setCurrentCustomerForSalesLines] =
+    useState("");
 
   useEffect(() => {
     const fetchDataAndSetState = async () => {
@@ -82,6 +85,7 @@ function App() {
       content = (
         <SalesQuoteComponent
           salesQuotes={salesQuotes}
+          setCurrentCustomerForSalesLines={setCurrentCustomerForSalesLines}
           onTabChange={handleTabChange}
         />
       );
@@ -95,6 +99,13 @@ function App() {
           salesQuotes={salesQuotes}
           onTabChange={handleTabChange}
           setPostedNewQuote={setPostedNewQuote}
+        />
+      );
+      break;
+    case "SalesLines":
+      content = (
+        <SalesLineList
+          currentCustomerForSalesLines={currentCustomerForSalesLines}
         />
       );
       break;

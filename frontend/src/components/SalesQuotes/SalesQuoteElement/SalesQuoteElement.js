@@ -1,4 +1,8 @@
-function SalesQuoteElement({ salesQuote, onTabChange }) {
+function SalesQuoteElement({
+  salesQuote,
+  onTabChange,
+  setCurrentCustomerForSalesLines,
+}) {
   return (
     <div className="salesQuote">
       <h2>Document No: {salesQuote.no}</h2>
@@ -9,7 +13,12 @@ function SalesQuoteElement({ salesQuote, onTabChange }) {
       <p>Sell To Customer Name: {salesQuote.sellToCustomerName}</p>
       <p>Sell To Contact: {salesQuote.selltoContact}</p>
       <p>Amount: {salesQuote.Amount}</p>
-      <button onClick={() => onTabChange("SalesLines")}>
+      <button
+        onClick={() => {
+          setCurrentCustomerForSalesLines(salesQuote.sellToCustomerName);
+          onTabChange("SalesLines");
+        }}
+      >
         Show Sales Lines
       </button>
       <button>Delete This Quote</button>

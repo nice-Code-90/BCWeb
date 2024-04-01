@@ -1,6 +1,10 @@
 import SalesQuoteElement from "./SalesQuoteElement/SalesQuoteElement";
 
-function SalesQuotes({ salesQuotes, onTabChange }) {
+function SalesQuotes({
+  salesQuotes,
+  onTabChange,
+  setCurrentCustomerForSalesLines,
+}) {
   return (
     <div className="salesQuotes">
       <h2>Sales Quotes</h2>
@@ -12,6 +16,7 @@ function SalesQuotes({ salesQuotes, onTabChange }) {
         <SalesQuoteElement
           key={salesQuote.no}
           salesQuote={salesQuote}
+          setCurrentCustomerForSalesLines={setCurrentCustomerForSalesLines}
           onTabChange={onTabChange}
         />
       ))}
