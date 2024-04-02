@@ -1,17 +1,15 @@
 import { useState } from "react";
 
-function SalesLineElement({ line, name }) {
-  const [isAddingNewLine, setIsAddingNewLine] = useState(false);
-
+function SalesLineElement({ salesLine, onTabChange }) {
   return (
     <>
       <div className="salesLine">
-        <h2>Description: {line.description}</h2>
-        <p>Document No: {line.documentNo}</p>
-        <p>Line No: {line.lineNo}</p>
-        <p>quantity: {line.quantity}</p>
-        <p>type: {line.type}</p>
-        <p>unit price: {line.unitPrice}</p>
+        <h2>Description: {salesLine.description}</h2>
+        <p>Document No: {salesLine.documentNo}</p>
+        <p>Line No: {salesLine.lineNo}</p>
+        <p>quantity: {salesLine.quantity}</p>
+        <p>type: {salesLine.type}</p>
+        <p>unit price: {salesLine.unitPrice}</p>
       </div>
     </>
   );

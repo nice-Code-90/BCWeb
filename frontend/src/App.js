@@ -17,16 +17,24 @@ const apiUrls = {
 };
 
 function App() {
-  const [selectedTab, setSelectedTab] = useState("");
-  const [customers, setCustomers] = useState([]);
-  const [items, setItems] = useState([]);
-  const [salesQuotes, setSalesQuotes] = useState([]);
-  const handleTabChange = (tabName) => setSelectedTab(tabName);
-  const [renderedSalesQuotes, setRenderedSalesQuotes] = useState(false);
-  const [renderedCustomers, setRenderedCustomers] = useState(false);
-  const [renderedItems, setRenderedItems] = useState(false);
-  const [postedNewQuote, setPostedNewQuote] = useState(false);
+  const [selectedTab, setSelectedTab] = useState(""); // actual page on web-portal
+  const [customers, setCustomers] = useState([]); // list of Customers
+  const [items, setItems] = useState([]); // list of items
+  const [salesQuotes, setSalesQuotes] = useState([]); //list of Sales Headers
+  const [salesLines, setSalesLines] = useState([]); // list of Sales Lines
+  //----------------------------------------------------------------------------------------------------------------//
+  const handleTabChange = (tabName) => setSelectedTab(tabName); // function for change page
+  const [renderedSalesQuotes, setRenderedSalesQuotes] = useState(false); // enable when RENDERED SALES QUOTE HEADERS
+  const [renderedSalesLines, setRenderedSalesLines] = useState(false); // enable when RENDERED SALES LINES
+  const [renderedCustomers, setRenderedCustomers] = useState(false); //  enable when REDNERED CUSTOMERS
+  const [renderedItems, setRenderedItems] = useState(false); // ........... RENDERED ITEMS
+  //------------------------------------------------------------------------------------------------------------------//
+  const [postedNewQuote, setPostedNewQuote] = useState(false); // enable when adding new Sales Header
+  const [postedNewLine, setPostedNewLine] = useState(false);
+
   const [currentCustomerForSalesLines, setCurrentCustomerForSalesLines] =
+    useState(""); // customer Name passed from salesHeader to salesLine
+  const [currentDocNoForSalesLines, setCurrentDocNoForSalesLines] =
     useState("");
 
   useEffect(() => {
@@ -54,6 +62,13 @@ function App() {
 
             setSalesQuotes(data);
             setRenderedSalesQuotes(true);
+          }
+        }
+        if (selectedTab === "SalesLines") {
+          if (!renderedSalesLines || postedNewLine) {
+            const data = await fetchData(apiUrls.salesLines);
+            setSalesLines(data);
+            setRenderedSalesLines(true);
           }
         }
       } catch (error) {
@@ -86,6 +101,7 @@ function App() {
         <SalesQuoteComponent
           salesQuotes={salesQuotes}
           setCurrentCustomerForSalesLines={setCurrentCustomerForSalesLines}
+          setCurrentDocNoForSalesLines={setCurrentDocNoForSalesLines}
           onTabChange={handleTabChange}
         />
       );
@@ -105,7 +121,9 @@ function App() {
     case "SalesLines":
       content = (
         <SalesLineList
+          salesLines={salesLines}
           currentCustomerForSalesLines={currentCustomerForSalesLines}
+          currentDocNo={currentDocNoForSalesLines}
         />
       );
       break;
