@@ -11,6 +11,9 @@ export default function SalesLineList({
   return (
     <div>
       <h2>Sales Lines for {currentCustomerForSalesLines}</h2>
+      <button onClick={() => onTabChange("newSalesLine")}>
+        New Sales Line for {currentCustomerForSalesLines}
+      </button>
 
       {salesLines
         .filter((salesLine) => salesLine.documentNo === currentDocNo)

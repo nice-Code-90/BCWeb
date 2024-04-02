@@ -4,6 +4,7 @@ import CustomerComponent from "./components/Customers/Customers";
 import ItemComponent from "./components/Items/Items";
 import SalesQuoteComponent from "./components/SalesQuotes/SalesQuotes";
 import NewSalesQuoteForm from "./components/SalesQuotes/NewSalesQuotesForm/NewSalesQuoteForm";
+import NewSalesLineForm from "./components/SalesQuotes/SalesQuoteElement/NewSalesLineForm/NewSalesLineForm";
 import fetchData from "./utils/fetchData";
 import SalesLineList from "./components/SalesQuotes/SalesQuoteElement/SalesLineElement/SalesLineList";
 
@@ -22,15 +23,17 @@ function App() {
   const [items, setItems] = useState([]); // list of items
   const [salesQuotes, setSalesQuotes] = useState([]); //list of Sales Headers
   const [salesLines, setSalesLines] = useState([]); // list of Sales Lines
+  const [resources, setResources] = useState([]);
   //----------------------------------------------------------------------------------------------------------------//
   const handleTabChange = (tabName) => setSelectedTab(tabName); // function for change page
   const [renderedSalesQuotes, setRenderedSalesQuotes] = useState(false); // enable when RENDERED SALES QUOTE HEADERS
   const [renderedSalesLines, setRenderedSalesLines] = useState(false); // enable when RENDERED SALES LINES
   const [renderedCustomers, setRenderedCustomers] = useState(false); //  enable when REDNERED CUSTOMERS
-  const [renderedItems, setRenderedItems] = useState(false); // ........... RENDERED ITEMS
+  const [renderedItems, setRenderedItems] = useState(false); // ................... RENDERED ITEMS
+  const [renderedResources, setRenderedResources] = useState(false);
   //------------------------------------------------------------------------------------------------------------------//
   const [postedNewQuote, setPostedNewQuote] = useState(false); // enable when adding new Sales Header
-  const [postedNewLine, setPostedNewLine] = useState(false);
+  const [postedNewLine, setPostedNewLine] = useState(false); // enable when adding new Sales Line
 
   const [currentCustomerForSalesLines, setCurrentCustomerForSalesLines] =
     useState(""); // customer Name passed from salesHeader to salesLine
@@ -56,12 +59,14 @@ function App() {
         }
         if (selectedTab === "salesQuotes") {
           if (!renderedSalesQuotes || postedNewQuote) {
+            setRenderedSalesQuotes(true);
+            setPostedNewQuote(false); // Frissítés jelző visszaállítása
+
             let data = await fetchData(apiUrls.customers);
             setCustomers(data);
             data = await fetchData(apiUrls.salesQuotes);
 
             setSalesQuotes(data);
-            setRenderedSalesQuotes(true);
           }
         }
         if (selectedTab === "SalesLines") {
@@ -69,6 +74,19 @@ function App() {
             const data = await fetchData(apiUrls.salesLines);
             setSalesLines(data);
             setRenderedSalesLines(true);
+            setPostedNewLine(false);
+          }
+        }
+        if (selectedTab === "newSalesLine") {
+          if (!renderedItems) {
+            const data = await fetchData(apiUrls.items);
+            setItems(data);
+            setRenderedItems(true);
+          }
+          if (!renderedResources) {
+            const data = await fetchData(apiUrls.resources);
+            setResources(data);
+            setRenderedResources(true);
           }
         }
       } catch (error) {
@@ -118,9 +136,22 @@ function App() {
         />
       );
       break;
+    case "newSalesLine":
+      content = (
+        <NewSalesLineForm
+          currentCustomerForSalesLines={currentCustomerForSalesLines}
+          items={items}
+          resources={resources}
+          currentDocNo={currentDocNoForSalesLines}
+          onTabChange={handleTabChange}
+          setPostedNewLine={setPostedNewLine}
+        />
+      );
+      break;
     case "SalesLines":
       content = (
         <SalesLineList
+          onTabChange={handleTabChange}
           salesLines={salesLines}
           currentCustomerForSalesLines={currentCustomerForSalesLines}
           currentDocNo={currentDocNoForSalesLines}

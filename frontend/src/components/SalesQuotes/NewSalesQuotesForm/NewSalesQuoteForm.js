@@ -63,6 +63,7 @@ function NewSalesQuoteForm({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       await fetch(`http://localhost:3000/api/PostSalesQuotes`, {
         method: "POST",

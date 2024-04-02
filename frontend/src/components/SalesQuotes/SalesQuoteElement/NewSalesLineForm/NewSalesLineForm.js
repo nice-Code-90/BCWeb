@@ -1,100 +1,145 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-function NewSalesLineForm({ onSubmit, apiUrls, salesQuoteNO }) {
-  const documentNo = salesQuoteNO;
-  const [lineTypeElements, setLineTypeElements] = useState([]);
-  const typeOfLine = ["Comment", "Item", "Resource"];
-  const [currentType, setCurrentType] = useState(typeOfLine[0]); // Állapot a kiválasztott típus tárolására
-  const [No, setNo] = useState([]); // Állapot a No elemek tárolására
+export default function NewSalesLineForm({
+  currentCustomerForSalesLines,
+  items,
+  resources,
+  currentDocNo,
+  setPostedNewLine,
+  onTabChange,
+}) {
+  const [quantity, setQuantity] = useState(1);
+  const [unitPrice, setUnitPrice] = useState(0);
+  const typeOfLine = ["Item", "Resource", "Comment"];
+  const [currentType, setCurrentType] = useState(typeOfLine[0]);
+  const [currentDescriptions, setCurrentDescriptions] = useState([]);
+  const [selectedDescription, setSelectedDescription] = useState("ATHENS Desk");
+  const [no, setNo] = useState("1896-S");
 
-  const handleTypeChange = async (currline) => {
-    setCurrentType(currline); // Állapot frissítése az aktuális típussal
+  useEffect(() => {
+    if (currentType === "Item") {
+      setCurrentDescriptions(items.map((item) => item.description));
+    } else if (currentType === "Resource") {
+      setCurrentDescriptions(resources.map((resource) => resource.name));
+    } else {
+      setCurrentDescriptions([
+        "Monthly Depreciation",
+        "Shipping Charge",
+        "Sale under Contract",
+        "Travel Expenses",
+      ]);
+    }
+  }, [items, currentType, resources]);
 
-    if (currline === "Item") {
-      const items = await fetchItems();
-      setNo(items); // No állapot frissítése az Item-ekkel
-    } else if (currline === "Resource") {
-      const resources = await fetchResources();
-      setNo(resources); // No állapot frissítése a Resource-okkal
+  const handleTypeChange = (currline) => {
+    setCurrentType(currline);
+  };
+
+  const handleDescChange = (currDescription) => {
+    setSelectedDescription(currDescription);
+    const selectedItem = items.find(
+      (item) => item.description === currDescription
+    );
+    const selectedResource = resources.find(
+      (resource) => resource.name === currDescription
+    );
+
+    if (selectedItem) {
+      setNo(selectedItem.no);
+    } else if (selectedResource) {
+      setNo(selectedResource.no);
+    } else {
+      setNo("");
     }
   };
 
-  const fetchResources = async () => {
+  const handleQuantityChange = (e) => {
+    setQuantity(e.target.value);
+  };
+
+  const handleUnitPriceChange = (e) => {
+    setUnitPrice(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:3000/api/resources`);
-      const data = await response.json();
-      return data.value;
+      await fetch(`http://localhost:3000/api/PostSalesLines`, {
+        method: "POST",
+        body: JSON.stringify({
+          documentType: "Quote",
+          documentNo: currentDocNo,
+          type: currentType,
+          description: selectedDescription,
+          description2: "",
+          quantity: quantity,
+          unitPrice: unitPrice,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     } catch (error) {
-      console.error("Error fetching Resources:", error);
-      return [];
+      console.log(error);
     }
+    setPostedNewLine(true);
+    onTabChange("SalesLines");
   };
-
-  const fetchItems = async () => {
-    try {
-      const response = await fetch(`http://localhost:3000/api/items`);
-      const data = await response.json();
-      return data.value;
-    } catch (error) {
-      console.error("Error fetching Items:", error);
-      return [];
-    }
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    onSubmit({});
-  };
-
-  const handleNOChange = () => {};
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Create New Sales Line</h2>
-      <label htmlFor="typeOfResource">
-        Type:
-        <select
-          onChange={(e) => handleTypeChange(e.target.value)}
-          name="typeOfResource"
-          value={currentType} // Az aktuális típus értékének beállítása a select elemen
-        >
-          {typeOfLine.map((currentLine) => (
-            <option key={currentLine} value={currentLine}>
-              {currentLine}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label
-        htmlFor="No."
-        title="Specifies the number of a general ledger account, item, resource, additional cost, or fixed asset, depending on the contents of the Type field."
-      >
-        No.
-        <select onChange={(e) => handleNOChange(e.target.value)} name="No.">
-          {No.map((NoElement) => (
-            <option
-              key={NoElement.no}
-              value={NoElement.name ? NoElement.name : NoElement.description}
-            >
-              {NoElement.name ? NoElement.name : NoElement.description}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label
-        htmlFor="quantity"
-        title="Specifies how many units are being sold."
-      >
-        quantity
-        <input type="number"></input>
-      </label>
-      <label htmlFor="unitPrice">
-        Unit price
-        <input type="number"></input>
-      </label>
-      <button type="submit">Add New SalesQuote Line</button>
-    </form>
+    <>
+      <form onSubmit={handleSubmit}>
+        <h2>New Sales Line for {currentCustomerForSalesLines}</h2>
+        <label htmlFor="typeOfResource">
+          Type:
+          <select
+            onChange={(e) => handleTypeChange(e.target.value)}
+            name="typeOfResource"
+            value={currentType}
+          >
+            {typeOfLine.map((currentLine) => (
+              <option key={currentLine} value={currentLine}>
+                {currentLine}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label htmlFor="description">
+          Description:
+          <select
+            onChange={(e) => handleDescChange(e.target.value)}
+            name="description"
+            value={currentDescriptions.find(
+              (desc) => desc === items.find((item) => item.description)
+            )}
+          >
+            {currentDescriptions.map((description) => (
+              <option key={description} value={description}>
+                {description}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label htmlFor="quantity">
+          Quantity:
+          <input
+            name="quantity"
+            type="number"
+            value={quantity}
+            onChange={handleQuantityChange}
+          ></input>
+        </label>
+        <label htmlFor="unitPrice">
+          Unit Price:
+          <input
+            name="unitPrice"
+            type="number"
+            value={unitPrice}
+            onChange={handleUnitPriceChange}
+          ></input>
+        </label>
+        <input type="submit" value="Add new Line to Sales Quote" />
+      </form>
+    </>
   );
 }
-
-export default NewSalesLineForm;
