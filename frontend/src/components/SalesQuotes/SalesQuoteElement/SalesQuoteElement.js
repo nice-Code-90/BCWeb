@@ -3,15 +3,13 @@ function SalesQuoteElement({
   onTabChange,
   setCurrentCustomerForSalesLines,
   setCurrentDocNoForSalesLines,
-  apiUrls,
 }) {
-  handleDeleteSalesQuote = async (e) => {
-    e.preventDefault();
+  const handleDeleteSalesQuote = async () => {
+    debugger;
     try {
-      await fetch(apiUrls.deleteSalesQuotes, {
+      await fetch(`http://localhost:3000/api/DeleteSalesQuote`, {
         method: "POST",
         body: JSON.stringify({
-          documentType: "Quote",
           quoteNo: salesQuote.no,
         }),
         headers: {
@@ -42,7 +40,7 @@ function SalesQuoteElement({
       >
         Show Sales Lines
       </button>
-      <button onClick={handleDeleteSalesQuote()}>Delete This Quote</button>
+      <button onClick={handleDeleteSalesQuote}>Delete This Quote</button>
     </div>
   );
 }

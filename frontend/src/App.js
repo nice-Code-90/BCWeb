@@ -12,9 +12,6 @@ const apiUrls = {
   customers: `http://${window.location.hostname}:${3000}/api/customers`,
   items: `http://${window.location.hostname}:${3000}/api/items`,
   salesQuotes: `http://${window.location.hostname}:${3000}/api/salesQuotes`,
-  deleteSalesQuotes: `http://${
-    window.location.hostname
-  }:${3000}/api/deleteSalesQuote`,
   salesLines: `http://${window.location.hostname}:${3000}/api/salesLines`,
   contacts: `http://${window.location.hostname}:${3000}/api/contacts`,
   resources: `http://${window.location.hostname}:${3000}/api/resources`,
