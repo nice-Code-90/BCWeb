@@ -5,6 +5,7 @@ function SalesQuotes({
   onTabChange,
   setCurrentCustomerForSalesLines,
   setCurrentDocNoForSalesLines,
+  apiUrls,
 }) {
   return (
     <div className="salesQuotes">
@@ -17,6 +18,7 @@ function SalesQuotes({
         <SalesQuoteElement
           key={salesQuote.no}
           salesQuote={salesQuote}
+          apiUrls={apiUrls}
           setCurrentCustomerForSalesLines={setCurrentCustomerForSalesLines}
           setCurrentDocNoForSalesLines={setCurrentDocNoForSalesLines}
           onTabChange={onTabChange}
