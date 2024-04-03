@@ -5,7 +5,7 @@ function NewSalesQuoteForm({
   apiUrls,
   customers,
   onTabChange,
-  setPostedNewQuote,
+  setChangedQuoteList,
 }) {
   const [sellToCustomerNo, setSellToCustomerNo] = useState(10000);
   const [sellToContact, setSellToContact] = useState([{ name: "-", key: 0 }]);
@@ -81,7 +81,8 @@ function NewSalesQuoteForm({
     } catch (error) {
       console.log(error);
     }
-    setPostedNewQuote(true);
+    debugger;
+    setChangedQuoteList(true);
     onTabChange("salesQuotes");
   };
 

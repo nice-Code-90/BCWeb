@@ -32,7 +32,7 @@ function App() {
   const [renderedItems, setRenderedItems] = useState(false); // ................... RENDERED ITEMS
   const [renderedResources, setRenderedResources] = useState(false);
   //------------------------------------------------------------------------------------------------------------------//
-  const [postedNewQuote, setPostedNewQuote] = useState(false); // enable when adding new Sales Header
+  const [changedQuoteList, setChangedQuoteList] = useState(false); // enable when adding new Sales Header
   const [postedNewLine, setPostedNewLine] = useState(false); // enable when adding new Sales Line
 
   const [currentCustomerForSalesLines, setCurrentCustomerForSalesLines] =
@@ -58,15 +58,14 @@ function App() {
           }
         }
         if (selectedTab === "salesQuotes") {
-          if (!renderedSalesQuotes || postedNewQuote) {
+          if (changedQuoteList || !renderedSalesQuotes) {
             setRenderedSalesQuotes(true);
-            setPostedNewQuote(false); // Frissítés jelző visszaállítása
-
-            let data = await fetchData(apiUrls.customers);
-            setCustomers(data);
-            data = await fetchData(apiUrls.salesQuotes);
-
+            setChangedQuoteList(false); // Frissítés jelző visszaállítása
+            let data = await fetchData(apiUrls.salesQuotes);
             setSalesQuotes(data);
+
+            data = await fetchData(apiUrls.customers);
+            setCustomers(data);
           }
         }
         if (selectedTab === "SalesLines") {
@@ -119,6 +118,7 @@ function App() {
         <SalesQuoteComponent
           salesQuotes={salesQuotes}
           apiUrls={apiUrls}
+          setChangedQuoteList={setChangedQuoteList}
           setCurrentCustomerForSalesLines={setCurrentCustomerForSalesLines}
           setCurrentDocNoForSalesLines={setCurrentDocNoForSalesLines}
           onTabChange={handleTabChange}
@@ -133,7 +133,7 @@ function App() {
           apiUrls={apiUrls}
           salesQuotes={salesQuotes}
           onTabChange={handleTabChange}
-          setPostedNewQuote={setPostedNewQuote}
+          setChangedQuoteList={setChangedQuoteList}
         />
       );
       break;

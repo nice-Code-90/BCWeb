@@ -3,12 +3,12 @@ function SalesQuoteElement({
   onTabChange,
   setCurrentCustomerForSalesLines,
   setCurrentDocNoForSalesLines,
+  setChangedQuoteList,
 }) {
   const handleDeleteSalesQuote = async () => {
-    debugger;
     try {
       await fetch(`http://localhost:3000/api/DeleteSalesQuote`, {
-        method: "POST",
+        method: "DELETE",
         body: JSON.stringify({
           quoteNo: salesQuote.no,
         }),
@@ -19,6 +19,8 @@ function SalesQuoteElement({
     } catch (error) {
       console.log(error);
     }
+    setChangedQuoteList(true);
+    onTabChange("salesQuotes");
   };
 
   return (
