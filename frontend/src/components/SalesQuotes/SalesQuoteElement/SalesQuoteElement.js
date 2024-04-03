@@ -11,7 +11,7 @@ function SalesQuoteElement({
   const handleDeleteSalesQuote = async () => {
     // Megjelenítjük a figyelmeztető üzenetet és csak akkor folytatjuk a törlést, ha a felhasználó elfogadja
     const confirmDelete = window.confirm(
-      "Biztosan törölni szeretné ezt az árajánlatot?"
+      "Are you sure delete this sales quote?"
     );
     if (confirmDelete) {
       try {
