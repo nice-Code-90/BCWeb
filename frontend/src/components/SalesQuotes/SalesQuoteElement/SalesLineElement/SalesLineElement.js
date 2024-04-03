@@ -1,19 +1,29 @@
 import { useState } from "react";
+import fetchData from "../../../../utils/fetchData";
 
-function SalesLineElement({ salesLine, onTabChange }) {
+function SalesLineElement({ salesLine, apiUrls, setSalesLines }) {
   const handleDeleteSalesLine = async () => {
     const confirmDelete = window.confirm("Delete this line of sales quote?");
-  };
-  /*  TODO
-  if (confirmDelete) {
-    try{
-      await fetch(`http://localhost:3000/api/DeleteSalesQuote`, {
-        method:"DELETE",
-        body: JSON.stringify({})
-      })
-    }
-  }*/
 
+    if (confirmDelete) {
+      try {
+        await fetch(`http://localhost:3000/api/DeleteSalesQuote`, {
+          method: "DELETE",
+          body: JSON.stringify({
+            docNo: salesLine.documentNo,
+            lineNo: salesLine.lineNo,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        let data = await fetchData(apiUrls.salesLines);
+        setSalesLines(data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
   return (
     <>
       <div className="salesLine">

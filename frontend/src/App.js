@@ -156,6 +156,8 @@ function App() {
         <SalesLineList
           onTabChange={handleTabChange}
           salesLines={salesLines}
+          setSalesLines={setSalesLines}
+          apiUrls={apiUrls}
           currentCustomerForSalesLines={currentCustomerForSalesLines}
           currentDocNo={currentDocNoForSalesLines}
         />
