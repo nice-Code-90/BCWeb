@@ -4,8 +4,12 @@ function SalesQuoteElement({
   setCurrentCustomerForSalesLines,
   setCurrentDocNoForSalesLines,
   setChangedQuoteList,
+  setSalesQuotes,
+  fetchData,
+  apiUrls,
 }) {
   const handleDeleteSalesQuote = async () => {
+    debugger;
     try {
       await fetch(`http://localhost:3000/api/DeleteSalesQuote`, {
         method: "DELETE",
@@ -16,6 +20,8 @@ function SalesQuoteElement({
           "Content-Type": "application/json",
         },
       });
+      let data = await fetchData(apiUrls.salesQuotes);
+      setSalesQuotes(data);
     } catch (error) {
       console.log(error);
     }

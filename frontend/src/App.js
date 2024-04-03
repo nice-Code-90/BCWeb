@@ -64,8 +64,8 @@ function App() {
             let data = await fetchData(apiUrls.salesQuotes);
             setSalesQuotes(data);
 
-            data = await fetchData(apiUrls.customers);
-            setCustomers(data);
+            let data2 = await fetchData(apiUrls.customers);
+            setCustomers(data2);
           }
         }
         if (selectedTab === "SalesLines") {
@@ -117,7 +117,9 @@ function App() {
       content = (
         <SalesQuoteComponent
           salesQuotes={salesQuotes}
+          setSalesQuotes={setSalesQuotes}
           apiUrls={apiUrls}
+          fetchData={fetchData}
           setChangedQuoteList={setChangedQuoteList}
           setCurrentCustomerForSalesLines={setCurrentCustomerForSalesLines}
           setCurrentDocNoForSalesLines={setCurrentDocNoForSalesLines}

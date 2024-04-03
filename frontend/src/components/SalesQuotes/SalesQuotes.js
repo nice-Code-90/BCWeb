@@ -6,6 +6,9 @@ function SalesQuotes({
   setCurrentCustomerForSalesLines,
   setCurrentDocNoForSalesLines,
   setChangedQuoteList,
+  setSalesQuotes,
+  apiUrls,
+  fetchData,
 }) {
   return (
     <div className="salesQuotes">
@@ -16,8 +19,11 @@ function SalesQuotes({
 
       {salesQuotes.map((salesQuote) => (
         <SalesQuoteElement
+          apiUrls={apiUrls}
+          fetchData={fetchData}
           key={salesQuote.no}
           salesQuote={salesQuote}
+          setSalesQuotes={setSalesQuotes}
           setChangedQuoteList={setChangedQuoteList}
           setCurrentCustomerForSalesLines={setCurrentCustomerForSalesLines}
           setCurrentDocNoForSalesLines={setCurrentDocNoForSalesLines}

@@ -81,7 +81,7 @@ function NewSalesQuoteForm({
     } catch (error) {
       console.log(error);
     }
-    debugger;
+
     setChangedQuoteList(true);
     onTabChange("salesQuotes");
   };
