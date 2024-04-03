@@ -95,13 +95,16 @@ function App() {
 
     fetchDataAndSetState();
   }, [
-    apiUrls.customers,
-    apiUrls.items,
     apiUrls.salesQuotes,
+    apiUrls.customers,
     selectedTab,
-    customers,
-    items,
-    salesQuotes,
+    renderedCustomers,
+    renderedItems,
+    renderedSalesQuotes,
+    renderedSalesLines,
+    renderedResources,
+    changedQuoteList,
+    postedNewLine,
   ]);
 
   let content;
