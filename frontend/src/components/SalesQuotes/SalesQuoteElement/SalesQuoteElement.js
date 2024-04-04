@@ -1,3 +1,4 @@
+import "./SalesQuoteStyle.css";
 function SalesQuoteElement({
   salesQuote,
   onTabChange,
@@ -36,7 +37,9 @@ function SalesQuoteElement({
 
   return (
     <div className="salesQuote">
-      <h2>Document No: {salesQuote.no}</h2>
+      <h2 onClick={() => onTabChange("newSalesQuote")}>
+        Document No: {salesQuote.no}
+      </h2>
       <p>Document Date: {salesQuote.documentDate}</p>
       <p>Due Date: {salesQuote.dueDate}</p>
       <p>Posting Date: {salesQuote.postingDate}</p>

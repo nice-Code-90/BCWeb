@@ -12,6 +12,28 @@ function NewSalesQuoteForm({
   const [documentDate, setDocumentDate] = useState("");
   const [dueDate, setDueDate] = useState("");
 
+  useEffect(() => {
+    const fetchInitialContacts = async () => {
+      try {
+        const contactsData = await fetchData(apiUrls.contacts);
+        const filteredContacts = contactsData.filter(
+          (contact) => contact.CompName === currentCustomer.name
+        );
+        setSellToContact(
+          filteredContacts.map((contact, index) => ({
+            name: contact.name,
+            CompName: contact.CompName,
+            key: index,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching Contacts:", error);
+      }
+    };
+
+    fetchInitialContacts();
+  }, []);
+
   let currentCustomer = customers[0];
   const fetchContacts = async (selectedCustomer) => {
     try {
