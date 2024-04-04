@@ -1,6 +1,37 @@
 import { useState } from "react";
+import fetchData from "../../../../utils/fetchData";
 
-function SalesLineElement({ salesLine, onTabChange }) {
+function SalesLineElement({
+  salesLine,
+  apiUrls,
+  setSalesLines,
+  setChangedSalesLineList,
+  onTabChange,
+}) {
+  const handleDeleteSalesLine = async () => {
+    const confirmDelete = window.confirm("Delete this line of sales quote?");
+
+    if (confirmDelete) {
+      try {
+        await fetch(`http://localhost:3000/api/DeleteSalesLine`, {
+          method: "DELETE",
+          body: JSON.stringify({
+            docNo: salesLine.documentNo,
+            lineNo: salesLine.lineNo,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        let data = await fetchData(apiUrls.salesLines);
+        setSalesLines(data);
+      } catch (error) {
+        console.log(error);
+      }
+      setChangedSalesLineList(true);
+      onTabChange("SalesLines");
+    }
+  };
   return (
     <>
       <div className="salesLine">
@@ -10,6 +41,8 @@ function SalesLineElement({ salesLine, onTabChange }) {
         <p>quantity: {salesLine.quantity}</p>
         <p>type: {salesLine.type}</p>
         <p>unit price: {salesLine.unitPrice}</p>
+
+        <button onClick={handleDeleteSalesLine}>Delete Sales Line</button>
       </div>
     </>
   );

@@ -3,7 +3,37 @@ function SalesQuoteElement({
   onTabChange,
   setCurrentCustomerForSalesLines,
   setCurrentDocNoForSalesLines,
+  setChangedQuoteList,
+  setSalesQuotes,
+  fetchData,
+  apiUrls,
 }) {
+  const handleDeleteSalesQuote = async () => {
+    // Megjelenítjük a figyelmeztető üzenetet és csak akkor folytatjuk a törlést, ha a felhasználó elfogadja
+    const confirmDelete = window.confirm(
+      "Are you sure delete this sales quote?"
+    );
+    if (confirmDelete) {
+      try {
+        await fetch(`http://localhost:3000/api/DeleteSalesQuote`, {
+          method: "DELETE",
+          body: JSON.stringify({
+            quoteNo: salesQuote.no,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        let data = await fetchData(apiUrls.salesQuotes);
+        setSalesQuotes(data);
+      } catch (error) {
+        console.log(error);
+      }
+      setChangedQuoteList(true);
+      onTabChange("salesQuotes");
+    }
+  };
+
   return (
     <div className="salesQuote">
       <h2>Document No: {salesQuote.no}</h2>
@@ -23,7 +53,7 @@ function SalesQuoteElement({
       >
         Show Sales Lines
       </button>
-      <button>Delete This Quote</button>
+      <button onClick={handleDeleteSalesQuote}>Delete This Quote</button>
     </div>
   );
 }

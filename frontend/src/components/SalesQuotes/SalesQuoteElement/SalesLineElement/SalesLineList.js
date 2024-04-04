@@ -6,6 +6,9 @@ export default function SalesLineList({
   salesLines,
   onTabChange,
   currentDocNo,
+  apiUrls,
+  setSalesLines,
+  setChangedSalesLineList,
 }) {
   console.log(salesLines);
   return (
@@ -19,9 +22,12 @@ export default function SalesLineList({
         .filter((salesLine) => salesLine.documentNo === currentDocNo)
         .map((salesLine) => (
           <SalesLineElement
+            setSalesLines={setSalesLines}
             key={`${salesLine.lineNo}${salesLine.documentNo}`}
             salesLine={salesLine}
+            apiUrls={apiUrls}
             onTabChange={onTabChange}
+            setChangedSalesLineList={setChangedSalesLineList}
           />
         ))}
     </div>

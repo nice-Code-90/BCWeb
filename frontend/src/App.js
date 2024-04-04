@@ -32,7 +32,8 @@ function App() {
   const [renderedItems, setRenderedItems] = useState(false); // ................... RENDERED ITEMS
   const [renderedResources, setRenderedResources] = useState(false);
   //------------------------------------------------------------------------------------------------------------------//
-  const [postedNewQuote, setPostedNewQuote] = useState(false); // enable when adding new Sales Header
+  const [changedQuoteList, setChangedQuoteList] = useState(false); // enable when adding new Sales Header
+  const [changedSalesLineList, setChangedSalesLineList] = useState(false);
   const [postedNewLine, setPostedNewLine] = useState(false); // enable when adding new Sales Line
 
   const [currentCustomerForSalesLines, setCurrentCustomerForSalesLines] =
@@ -58,15 +59,14 @@ function App() {
           }
         }
         if (selectedTab === "salesQuotes") {
-          if (!renderedSalesQuotes || postedNewQuote) {
+          if (changedQuoteList || !renderedSalesQuotes) {
             setRenderedSalesQuotes(true);
-            setPostedNewQuote(false); // Frissítés jelző visszaállítása
-
-            let data = await fetchData(apiUrls.customers);
-            setCustomers(data);
-            data = await fetchData(apiUrls.salesQuotes);
-
+            setChangedQuoteList(false); // Frissítés jelző visszaállítása
+            let data = await fetchData(apiUrls.salesQuotes);
             setSalesQuotes(data);
+
+            let data2 = await fetchData(apiUrls.customers);
+            setCustomers(data2);
           }
         }
         if (selectedTab === "SalesLines") {
@@ -118,6 +118,10 @@ function App() {
       content = (
         <SalesQuoteComponent
           salesQuotes={salesQuotes}
+          setSalesQuotes={setSalesQuotes}
+          apiUrls={apiUrls}
+          fetchData={fetchData}
+          setChangedQuoteList={setChangedQuoteList}
           setCurrentCustomerForSalesLines={setCurrentCustomerForSalesLines}
           setCurrentDocNoForSalesLines={setCurrentDocNoForSalesLines}
           onTabChange={handleTabChange}
@@ -132,7 +136,7 @@ function App() {
           apiUrls={apiUrls}
           salesQuotes={salesQuotes}
           onTabChange={handleTabChange}
-          setPostedNewQuote={setPostedNewQuote}
+          setChangedQuoteList={setChangedQuoteList}
         />
       );
       break;
@@ -152,7 +156,10 @@ function App() {
       content = (
         <SalesLineList
           onTabChange={handleTabChange}
+          setChangedSalesLineList={setChangedSalesLineList}
           salesLines={salesLines}
+          setSalesLines={setSalesLines}
+          apiUrls={apiUrls}
           currentCustomerForSalesLines={currentCustomerForSalesLines}
           currentDocNo={currentDocNoForSalesLines}
         />
