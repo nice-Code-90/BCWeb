@@ -1,13 +1,19 @@
 import { useState } from "react";
 import fetchData from "../../../../utils/fetchData";
 
-function SalesLineElement({ salesLine, apiUrls, setSalesLines }) {
+function SalesLineElement({
+  salesLine,
+  apiUrls,
+  setSalesLines,
+  setChangedSalesLineList,
+  onTabChange,
+}) {
   const handleDeleteSalesLine = async () => {
     const confirmDelete = window.confirm("Delete this line of sales quote?");
 
     if (confirmDelete) {
       try {
-        await fetch(`http://localhost:3000/api/DeleteSalesQuote`, {
+        await fetch(`http://localhost:3000/api/DeleteSalesLine`, {
           method: "DELETE",
           body: JSON.stringify({
             docNo: salesLine.documentNo,
@@ -22,6 +28,8 @@ function SalesLineElement({ salesLine, apiUrls, setSalesLines }) {
       } catch (error) {
         console.log(error);
       }
+      setChangedSalesLineList(true);
+      onTabChange("SalesLines");
     }
   };
   return (

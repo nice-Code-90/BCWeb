@@ -8,6 +8,7 @@ export default function SalesLineList({
   currentDocNo,
   apiUrls,
   setSalesLines,
+  setChangedSalesLineList,
 }) {
   console.log(salesLines);
   return (
@@ -26,6 +27,7 @@ export default function SalesLineList({
             salesLine={salesLine}
             apiUrls={apiUrls}
             onTabChange={onTabChange}
+            setChangedSalesLineList={setChangedSalesLineList}
           />
         ))}
     </div>

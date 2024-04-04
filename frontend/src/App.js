@@ -33,6 +33,7 @@ function App() {
   const [renderedResources, setRenderedResources] = useState(false);
   //------------------------------------------------------------------------------------------------------------------//
   const [changedQuoteList, setChangedQuoteList] = useState(false); // enable when adding new Sales Header
+  const [changedSalesLineList, setChangedSalesLineList] = useState(false);
   const [postedNewLine, setPostedNewLine] = useState(false); // enable when adding new Sales Line
 
   const [currentCustomerForSalesLines, setCurrentCustomerForSalesLines] =
@@ -155,6 +156,7 @@ function App() {
       content = (
         <SalesLineList
           onTabChange={handleTabChange}
+          setChangedSalesLineList={setChangedSalesLineList}
           salesLines={salesLines}
           setSalesLines={setSalesLines}
           apiUrls={apiUrls}

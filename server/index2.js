@@ -304,6 +304,39 @@ app.get("/api/customers", async (req, res) => {
 });
 
 //---------------------------------DELETE REQUESTS----------------------------------------//
+
+//Delete certain Sales Line of SQuote
+app.delete("/api/DeleteSalesLine", async (req, res) => {
+  if (myToken === "") {
+    try {
+      myToken = await getToken();
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  }
+  await waitForToken();
+  let noOfDeletingLine = req.body.lineNo;
+  let docNo = req.body.docNo;
+
+  try {
+    const response = await axios.delete(
+      `${salesLinesAPI}('Quote','${docNo}',${noOfDeletingLine})`,
+      {
+        headers: {
+          Authorization: `Bearer ${myToken}`,
+          "Content-Type": "application/json",
+          Accept: "*/*",
+        },
+      }
+    );
+    console.log("Sales Line deleted:", response.data);
+    res.json({ message: "Sales Line deleted" });
+  } catch (error) {
+    console.log("Error during delete Sales Line:", error);
+    res.status(500)("Error deleting Sales Line");
+  }
+});
+//Delete Sales Quote
 app.delete("/api/DeleteSalesQuote", async (req, res) => {
   if (myToken === "") {
     try {
